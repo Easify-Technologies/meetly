@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Orbit } from "next/font/google";
+import Providers from "./providers";
 import "./globals.css";
 
 const orbit = Orbit({
@@ -26,7 +27,9 @@ export default function RootLayout({
       <body
         className={`${orbit.variable} antialiased`}
       >
-        {children}
+        <Providers>
+          {children}
+        </Providers>
       </body>
     </html>
   );

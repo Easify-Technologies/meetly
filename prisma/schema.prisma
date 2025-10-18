@@ -9,5 +9,30 @@ datasource db {
 
 model User {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  location  String
+  name      String
+  email     String   @unique
+  cafeId    String?  @db.ObjectId
+  createdAt DateTime @default(now())
+
+  cafe      Cafe?    @relation(fields: [cafeId], references: [id])
+}
+
+model Location {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  country   String
+  imageUrl  String
+  cafes     Cafe[]
+  createdAt DateTime @default(now())
+}
+
+model Cafe {
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  locationId  String    @db.ObjectId
+  address     String
+  createdAt   DateTime  @default(now())
+
+  location    Location  @relation(fields: [locationId], references: [id])
+  users       User[]
 }

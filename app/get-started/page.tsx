@@ -1,58 +1,19 @@
+'use client';
+
 import React from 'react';
 import Image from "next/image";
 import Link from 'next/link';
+import { useFetchAllLocations } from '../queries/fetch-locations';
 
-const page = () => {
-  const locationsOptions = [
-    { 
-      uuid: Math.random().toString(36).substring(2, 15),
-      name: 'Metro Manila',
-      country: 'Philippines',
-      imageUrl: "/location/photo-1754388298164-4db76ebc1276.jpeg"
-    },
-    {
-      uuid: Math.random().toString(36).substring(2, 15),
-      name: 'Jakarta',
-      country: 'Indonesia',
-      imageUrl: "/location/photo-1670163297171-075c1bbad3b0.jpeg"
-    },
-    {
-      uuid: Math.random().toString(36).substring(2, 15),
-      name: 'Seoul',
-      country: 'South Korea',
-      imageUrl: "/location/photo-1735253499196-8f261d5551c4.jpeg"
-    },
-    {
-      uuid: Math.random().toString(36).substring(2, 15),
-      name: 'Bali',
-      country: 'Indonesia',
-      imageUrl: "/location/photo-1655100021097-372e99cd9965.jpeg"
-    },
-    {
-      uuid: Math.random().toString(36).substring(2, 15),
-      name: 'Osaka',
-      country: 'Japan',
-      imageUrl: "/location/photo-1746431565053-87d6cc1c4e50.jpeg"
-    },
-    {
-      uuid: Math.random().toString(36).substring(2, 15),
-      name: 'Kyoto',
-      country: 'Japan',
-      imageUrl: "/location/photo-1588677979404-ff19ee781344.jpeg"
-    },
-    {
-      uuid: Math.random().toString(36).substring(2, 15),
-      name: 'Tokyo',
-      country: 'Japan',
-      imageUrl: "/location/photo-1699444116939-41ecae88b19a.jpeg"
-    },
-    {
-      uuid: Math.random().toString(36).substring(2, 15),
-      name: 'Stockholm ',
-      country: 'Sweden',
-      imageUrl: "/location/photo-1645096685522-5de4fd482ffd.jpeg"
-    }
-  ];
+interface Locations {
+  id: string;
+  name: string;
+  country: string;
+  imageUrl: string;
+}
+
+const Page = () => {
+  const { data: locations } = useFetchAllLocations();
 
   return (
     <>
@@ -91,14 +52,14 @@ const page = () => {
                         </button>
                       </div>
                       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 p-1">
-                        {locationsOptions.map((location) => (
-                          <button key={location.uuid} id={location.uuid} type="button" className="group relative overflow-hidden rounded-lg border bg-card transition-all hover:shadow-md hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-[#2F1107] focus:ring-offset-2">
+                        {locations && locations.map((item: Locations) => (
+                          <button key={item.id} type="button" className="group relative overflow-hidden rounded-lg border bg-card transition-all hover:shadow-md hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-[#2F1107] focus:ring-offset-2">
                             <div className="aspect-[4/3] relative overflow-hidden bg-muted">
-                              <Image width={100} height={100} alt="Metro Manila" className="h-full w-full object-cover transition-transform group-hover:scale-110" src={location.imageUrl} />
+                              <Image width={100} height={100} alt="Metro Manila" className="h-full w-full object-cover transition-transform group-hover:scale-110" src={item.imageUrl} />
                             </div>
                             <div className="p-3">
-                              <h3 className="font-medium text-sm line-clamp-1">{location.name}</h3>
-                              <p className="text-xs text-[#2F1107] line-clamp-1">{location.country}</p>
+                              <h3 className="font-medium text-sm line-clamp-1">{item.name}</h3>
+                              <p className="text-xs text-[#2F1107] line-clamp-1">{item.country}</p>
                             </div>
                           </button>
                         ))}
@@ -131,4 +92,4 @@ const page = () => {
   )
 }
 
-export default page
+export default Page
