@@ -10,7 +10,7 @@ const orbit = Orbit({
 });
 
 export const metadata: Metadata = {
-  title: "Meetly",
+  title: "Meetlyr",
   description: "Meet new people and Share real moments",
   icons: {
     icon: "/mocha-favicon-ico.webp",
