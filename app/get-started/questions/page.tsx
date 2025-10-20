@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from 'next/link';
 import { useSearchParams, useRouter } from 'next/navigation';
 
+import { Slider } from '@/components/ui/slider';
 import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 
@@ -17,11 +18,17 @@ const Page = () => {
 
     const [step, setStep] = useState(1);
     const [selectedStyle, setSelectedStyle] = useState("");
+    const [sliderValue, setSliderValue] = useState([10]);
     const [formData, setFormData] = useState({
         connectionStyle: "",
         communicationStyle: "",
         socialStyle: "",
         healthFitnessStyle: "",
+        family: "",
+        spirituality: "",
+        politicsNews: "",
+        humor: "",
+        peopleType: ""
     });
 
     const connectionStyles = [
@@ -92,29 +99,64 @@ const Page = () => {
         1: "How do you usually connect with people?",
         2: "What makes a conversation meaningful to you?",
         3: "I prefer spending more time in?",
-        4: "How much does health and fitness matter to you?"
+        4: "How much does health and fitness matter to you?",
+        5: "How important is family to you?",
+        6: "How important is spirituality to you?",
+        7: "Do you enjoy discussing politics/news?",
+        8: "Do you enjoy politically incorrect humor?",
+        9: "What kind of people do you like to meet?"
     };
 
-    const stepConfig: { [key: number]: { key: string; options: { label: string; value: string; }[] } } = {
-        1: { key: "connectionStyle", options: connectionStyles },
-        2: { key: "communicationStyle", options: communicationStyles },
-        3: { key: "socialStyle", options: socialStyles },
-        4: { key: "healthFitnessStyle", options: healthFitnessStyles },
+    const stepConfig: {
+        [key: number]: {
+            key: string;
+            type: "radio" | "slider" | "multi";
+            options?: { label: string; value: string }[];
+        };
+    } = {
+        1: { key: "connectionStyle", type: "radio", options: connectionStyles },
+        2: { key: "communicationStyle", type: "radio", options: communicationStyles },
+        3: { key: "socialStyle", type: "radio", options: socialStyles },
+        4: { key: "healthFitnessStyle", type: "radio", options: healthFitnessStyles },
+
+        // Slider steps
+        5: { key: "family", type: "slider" },
+        6: { key: "spirituality", type: "slider" },
+        7: { key: "politicsNews", type: "slider" },
+        8: { key: "humor", type: "slider" },
+
+        // Multiple select radio (last step)
+        9: {
+            key: "peopleType",
+            type: "multi",
+            options: [
+                { label: "Creative people", value: "creative" },
+                { label: "Entrepreneurs", value: "entrepreneurs" },
+                { label: "Adventurous people", value: "adventurous" },
+                { label: "Calm and thoughtful", value: "calm" },
+                { label: "Funny and outgoing", value: "funny" },
+            ],
+        },
     };
 
     const handleNext = () => {
         if (!selectedStyle) return;
 
         const { key } = stepConfig[step];
-        const updatedForm = { ...formData, [key]: selectedStyle };
+        const value =
+            Array.isArray(selectedStyle) && step === 9
+                ? selectedStyle.join(",")
+                : selectedStyle;
+
+        const updatedForm = { ...formData, [key]: value };
         setFormData(updatedForm);
 
         const params = new URLSearchParams(searchParams.toString());
-        params.set(key, selectedStyle);
+        params.set(key, value);
 
         router.replace(`?${params.toString()}`, { scroll: false });
 
-        if (step < 4) {
+        if (step < 9) {
             setStep(step + 1);
             setSelectedStyle("");
         } else {
@@ -160,44 +202,76 @@ const Page = () => {
                                             ))}
                                         </div>
                                         <div className='space-y-3'>
-                                            <RadioGroup
-                                                className="w-full gap-7"
-                                                value={selectedStyle}
-                                                onValueChange={(value) => setSelectedStyle(value)}
-                                            >
-                                                {options.map((style, index) => (
-                                                    <div
-                                                        key={index}
-                                                        className="flex items-center border-b border-[#2F1107] justify-between pb-2"
-                                                    >
-                                                        <Label
-                                                            className="text-sm font-medium text-[#2F1107]"
-                                                            htmlFor={style.value}
+                                            {stepConfig[step].type === "radio" && (
+                                                <RadioGroup
+                                                    className="w-full gap-7"
+                                                    value={selectedStyle}
+                                                    onValueChange={(value) => setSelectedStyle(value)}
+                                                >
+                                                    {options?.map((style, index) => (
+                                                        <div
+                                                            key={index}
+                                                            className="flex items-center border-b border-[#2F1107] justify-between pb-2"
                                                         >
-                                                            {style.label}
-                                                        </Label>
-                                                        <RadioGroupItem
-                                                            className="border-[#2F1107]
-                                                            text-[#2F1107]
-                                                            data-[state=checked]:bg-[#2F1107]
-                                                            data-[state=checked]:border-[#2F1107]
-                                                            data-[state=checked]:text-[#2F1107]"
-                                                            value={style.value}
-                                                            id={style.value}
-                                                        />
+                                                            <Label
+                                                                className="text-sm font-medium text-[#2F1107]"
+                                                                htmlFor={style.value}
+                                                            >
+                                                                {style.label}
+                                                            </Label>
+                                                            <RadioGroupItem
+                                                                className="border-[#2F1107]
+                                                                text-[#2F1107]
+                                                                data-[state=checked]:bg-[#2F1107]
+                                                                data-[state=checked]:border-[#2F1107]
+                                                                data-[state=checked]:text-[#2F1107]"
+                                                                value={style.value}
+                                                                id={style.value}
+                                                            />
+                                                        </div>
+                                                    ))}
+                                                </RadioGroup>
+                                            )}
+
+                                            {stepConfig[step].type === "slider" && (
+                                                <div className="w-full flex flex-col items-center gap-6">
+                                                    <Slider
+                                                        value={sliderValue}
+                                                        onValueChange={setSliderValue}
+                                                        min={1}
+                                                        max={10}
+                                                        step={1}
+                                                        className="w-full max-w-md"
+                                                    />
+                                                    <div className="flex justify-between text-center text-muted-foreground text-sm w-full max-w-md">
+                                                        {Array.from({ length: 10 }).map((_, i) => (
+                                                            <span
+                                                                key={i}
+                                                                className={`w-0 flex justify-center ${sliderValue[0] === i + 1
+                                                                    ? "font-bold text-foreground"
+                                                                    : "text-muted-foreground"
+                                                                    }`}
+                                                            >
+                                                                {i + 1}
+                                                            </span>
+                                                        ))}
                                                     </div>
-                                                ))}
-                                            </RadioGroup>
+                                                </div>
+                                            )}
                                         </div>
                                     </div>
                                     <div className="p-4 bg-background">
                                         <button
-                                            type='button'
+                                            type="button"
                                             onClick={handleNext}
-                                            disabled={!selectedStyle}
+                                            disabled={
+                                                stepConfig[step].type === "radio"
+                                                    ? !selectedStyle
+                                                    : stepConfig[step].type === "slider" && !sliderValue
+                                            }
                                             className="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm md:text-base font-medium transition-all select-none bg-[#FFD100] text-[#2F1107] hover:bg-[#2F1107] hover:text-[#ffd100] h-12 px-4 py-2 rounded-full w-full duration-500 disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
                                         >
-                                            {step === 1 ? "Next" : "Finish"}
+                                            {step === 9 ? "Finish" : "Next"}
                                         </button>
                                     </div>
                                 </div>
