@@ -1,0 +1,3 @@
+exit
+name: 'mongodb:27017'
+rs.status()
