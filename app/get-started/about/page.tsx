@@ -15,7 +15,6 @@ import { ChevronDownIcon } from "lucide-react";
 
 const Page = () => {
     const router = useRouter();
-    const searchParams = useSearchParams();
 
     const [open, setOpen] = useState(false);
     const [date, setDate] = useState<Date | undefined>(undefined);
