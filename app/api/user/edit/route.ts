@@ -20,7 +20,6 @@ export async function PUT(request: NextRequest) {
 
         const body = await request.json();
 
-        // 🧠 NOTE: Email REMOVED from allowedFields
         const allowedFields = [
             "name",
             "phoneNumber",
