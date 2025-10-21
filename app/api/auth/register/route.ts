@@ -95,9 +95,6 @@ export async function POST(request: NextRequest) {
             { message: "User created", userId: user.id, token, isLoggedIn: true },
             { status: 201 }
         );
-
-
-
     } catch (error: any) {
         console.error(error);
         return NextResponse.json(

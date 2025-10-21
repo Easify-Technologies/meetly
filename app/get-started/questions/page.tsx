@@ -95,11 +95,9 @@ const Page = () => {
     }
   };
 
-  // current step config
   const currentConfig = stepConfig[step];
   const options = currentConfig.options;
 
-  // compute whether Next should be disabled
   const isDisabled = (() => {
     if (currentConfig.type === "radio") return !selectedStyle;
     if (currentConfig.type === "slider") return !(sliderValue && sliderValue.length > 0);
@@ -108,7 +106,6 @@ const Page = () => {
   })();
 
   const handleNext = () => {
-    // determine value based on step type
     const { key, type } = currentConfig;
 
     let valueToSave: string | null = null;
@@ -121,38 +118,32 @@ const Page = () => {
     }
 
     if (!valueToSave) {
-      // nothing selected for this step; do not proceed
       return;
     }
 
     const updatedForm = { ...formData, [key]: valueToSave };
     setFormData(updatedForm);
 
-    // Update URL query params client-side without reload
     const params = new URLSearchParams(searchParams.toString());
     params.set(key, valueToSave);
     router.replace(`?${params.toString()}`, { scroll: false });
 
-    // Advance to next step (or finish)
     if (step < 9) {
       setStep((s) => s + 1);
-      // reset states for next step
       setSelectedStyle("");
       setSelectedMulti([]);
       setSliderValue([10]);
     } else {
-      // final step reached
       console.log("✅ Final Form Data:", updatedForm);
-      // optionally navigate to a summary or submit endpoint here
+      router.push(`/get-started/about?${params.toString()}`);
     }
   };
 
-  // handle multi selection clicks (max 3)
   const toggleMulti = (val: string) => {
     setSelectedMulti((prev) => {
       const exists = prev.includes(val);
       if (exists) return prev.filter((p) => p !== val);
-      if (prev.length >= 3) return prev; // enforce max 3 selections
+      if (prev.length >= 3) return prev;
       return [...prev, val];
     });
   };
@@ -212,10 +203,10 @@ const Page = () => {
                               </Label>
                               <RadioGroupItem
                                 className="border-[#2F1107]
-                                                                text-[#2F1107]
-                                                                data-[state=checked]:bg-[#2F1107]
-                                                                data-[state=checked]:border-[#2F1107]
-                                                                data-[state=checked]:text-[#2F1107]"
+                                text-[#2F1107]
+                                data-[state=checked]:bg-[#2F1107]
+                                data-[state=checked]:border-[#2F1107]
+                                data-[state=checked]:text-[#2F1107]"
                                 value={style.value}
                                 id={style.value}
                               />
