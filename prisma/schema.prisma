@@ -27,6 +27,7 @@ model User {
   kindOfPeople        String[]
   password            String
   isLoggedIn          Boolean  @default(false)
+  isAdmin             Boolean  @default(false)
   createdAt           DateTime @default(now())
   cafeId              String? @db.ObjectId
 
@@ -35,7 +36,7 @@ model User {
 
 model Location {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  name      String
+  city      String
   country   String
   imageUrl  String
   cafes     Cafe[]
@@ -48,6 +49,7 @@ model Cafe {
   locationId  String    @db.ObjectId
   address     String
   createdAt   DateTime  @default(now())
+  imageUrl    String
 
   location    Location  @relation(fields: [locationId], references: [id])
   users       User[]
