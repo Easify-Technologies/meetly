@@ -7,9 +7,6 @@ import Link from 'next/link';
 import { useSession } from 'next-auth/react';
 
 const Page = () => {
-  const { data: session } = useSession();
-  console.log('User session:', session);
-
   return (
     <>
       <Navbar />

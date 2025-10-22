@@ -63,13 +63,13 @@ export async function POST(request: Request) {
     }
 
     const getCity = await prisma.location.findUnique({
-        where: {
-            id: city_id
-        },
-        select: {
-            city: true,
-            country: true
-        }
+      where: {
+        id: city_id,
+      },
+      select: {
+        city: true,
+        country: true,
+      },
     });
 
     // Hash password
@@ -95,7 +95,7 @@ export async function POST(request: Request) {
         incorrectHumor: humor.toString(),
         kindOfPeople: peopleType,
         password: hashedPassword,
-        isLoggedIn: true
+        isLoggedIn: true,
       },
     });
 
@@ -108,6 +108,7 @@ export async function POST(request: Request) {
 
     return NextResponse.json(
       {
+        success: true,
         message: "User created successfully",
         userId: user.id,
         token,
