@@ -1,27 +1,77 @@
 'use client';
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
+
+import { useAddUser } from "@/app/queries/add-user";
 
 interface UserDetailsProps {
-  name: string | undefined;
-  email: string | undefined;
-  phoneNumber: string | undefined;
+  name: string;
+  email: string;
+  password: string;
+  phoneNumber: string;
+  city_id?: string;
+  cafe_id?: string;
+  connectionStyle?: string;
+  communicationStyle?: string;
+  socialStyle?: string;
+  healthFitnessStyle?: string;
+  family?: number;
+  spirituality?: number;
+  politicsNews?: number;
+  humor?: number;
+  peopleType?: string[];
+  gender?: string;
+  dateOfBirth?: string;
+  [key: string]: any;
 }
 
 const Page = () => {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [formData, setFormData] = useState<UserDetailsProps>({
     name: "",
     email: "",
-    phoneNumber: ""
+    phoneNumber: "",
+    password: ""
   });
 
-  const { name, email, phoneNumber } = formData;
+  const { name, email, phoneNumber, password } = formData;
+
+  useEffect(() => {
+    const entries = Array.from(searchParams.entries());
+    const queryParams = Object.fromEntries(entries);
+
+    const parsedParams: Partial<UserDetailsProps> = Object.entries(queryParams).reduce(
+      (acc, [key, value]) => {
+        if (["family", "spirituality", "politicsNews", "humor"].includes(key)) {
+          acc[key] = Number(value);
+        } else if (key === "peopleType") {
+          acc[key] = decodeURIComponent(value).split(",");
+        } else {
+          acc[key] = value;
+        }
+        return acc;
+      },
+      {} as Partial<UserDetailsProps>
+    );
+
+    setFormData((prev) => ({
+      ...prev,
+      ...parsedParams,
+    }));
+  }, [searchParams]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+  }
+
+  const { mutate, isPending, isSuccess, isError, data, error } = useAddUser();
+
+  const handleSubmitUserDetails = () => {
+    console.log("Final submitted data:", formData);
+    mutate(formData);
   }
 
   return (
@@ -59,13 +109,19 @@ const Page = () => {
                       <h1 className="text-2xl md:text-3xl lg:text-4xl text-[#2F1107] font-semibold">What is phone number?</h1>
                       <input type="text" value={phoneNumber} id="phoneNumber" name="phoneNumber" onChange={handleChange} className="bg-muted px-5 py-2 outline border-0 rounded-full w-full h-12 text-[#2F1107] font-medium text-base mt-6" />
                     </div>
+                    <div className='py-6 border-t border-[#f7f0f2]'>
+                      <h1 className="text-2xl md:text-3xl lg:text-4xl text-[#2F1107] font-semibold">What is your password?</h1>
+                      <input type="password" value={password} id="password" name="password" onChange={handleChange} className="bg-muted px-5 py-2 outline border-0 rounded-full w-full h-12 text-[#2F1107] font-medium text-base mt-6" />
+                    </div>
                   </div>
                   <div className="p-4 bg-background">
                     <button
+                      disabled={isPending}
+                      onClick={handleSubmitUserDetails}
                       type="button"
                       className="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm md:text-base font-medium transition-all select-none bg-[#FFD100] text-[#2F1107] hover:bg-[#2F1107] hover:text-[#ffd100] h-12 px-4 py-2 rounded-full w-full duration-500 disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
                     >
-                      Sign up
+                      {isPending ? "Signing up..." : "Sign up"}
                     </button>
                   </div>
                 </div>
