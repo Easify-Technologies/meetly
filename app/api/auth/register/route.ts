@@ -67,7 +67,7 @@ export async function POST(request: Request) {
             id: city_id
         },
         select: {
-            name: true,
+            city: true,
             country: true
         }
     });
@@ -84,7 +84,7 @@ export async function POST(request: Request) {
         gender,
         dateOfBirth,
         country: getCity?.country || "",
-        city: getCity?.name || "",
+        city: getCity?.city || "",
         connectionStyles: connectionStyle,
         communicationStyles: communicationStyle,
         socialStyles: socialStyle,
