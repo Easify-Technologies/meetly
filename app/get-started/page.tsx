@@ -57,7 +57,7 @@ const Page = () => {
                         {locations && locations.map((item: Locations) => (
                           <Link href={`/get-started/location?city_id=${item.id}`} key={item.id} type="button" className="group relative overflow-hidden rounded-lg border bg-card transition-all hover:shadow-md hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-[#2F1107] focus:ring-offset-2">
                             <div className="aspect-[4/3] relative overflow-hidden bg-muted">
-                              <Image width={100} height={100} alt="Metro Manila" className="h-full w-full object-cover transition-transform group-hover:scale-110" src={item.imageUrl} />
+                              <Image width={100} height={100} alt={item.country} className="h-full w-full object-cover transition-transform group-hover:scale-110" src={item.imageUrl} />
                             </div>
                             <div className="p-3">
                               <h3 className="font-medium text-sm line-clamp-1">{item.name}</h3>

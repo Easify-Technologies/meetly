@@ -4,8 +4,12 @@ import React from 'react';
 import Navbar from '@/components/ui/Navbar';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useSession } from 'next-auth/react';
 
 const Page = () => {
+  const { data: session } = useSession();
+  console.log('User session:', session);
+
   return (
     <>
       <Navbar />
@@ -63,13 +67,13 @@ const Page = () => {
                               <div className="space-y-6 flex-1">
                                 <div className="text-center">
                                   <h2 className="text-4xl md:text-5xl lg:text-6xl">Book your next Kin</h2>
-                                  <div className="flex items-center justify-center gap-2 mt-2">
+                                  <div className="flex items-center justify-center gap-2 mt-5">
                                     <p className="text-base md:text-lg text-muted-foreground">5 people are waiting for you</p>
                                   </div>
                                 </div>
 
                               </div>
-                              <div className="shrink-0 py-4">
+                              <div className="shrink-0 py-5">
                                 <button data-slot="button" className="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm md:text-base font-medium transition-all select-none disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg:not([class*='size-'])]:size-4 shrink-0 [&amp;_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive bg-[#2F1107] text-white hover:bg-[#2F1107]/90 h-12 px-4 py-2 rounded-full w-full" type="button">Book my seat</button>
                               </div>
                             </form>
@@ -84,7 +88,7 @@ const Page = () => {
           </div>
         </div>
         <div className="hidden lg:flex lg:w-1/2 relative items-center justify-center overflow-hidden bg-muted">
-          <img alt="Background" className="w-full object-cover h-full" src="https://images.unsplash.com/photo-1629914707102-d04d7262ef96?crop=entropy&amp;cs=tinysrgb&amp;fit=max&amp;fm=jpg&amp;ixid=M3w3NTU1ODJ8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NjExMjAwMjl8&amp;ixlib=rb-4.1.0&amp;q=80&amp;w=1080" />
+          <Image alt="" className="absolute inset-0 w-full h-full object-cover opacity-90" src="/photo-1629914707102-d04d7262ef96.jpeg" width={100} height={100} />
         </div>
       </div>
     </>
