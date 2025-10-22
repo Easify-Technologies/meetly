@@ -33,15 +33,15 @@ export async function POST(request: NextResponse) {
             where: { id: user.id },
             data: { isLoggedIn: true },
         });
-        
+
         const token = jwt.sign(
-            { userId: user.id, email: user.email },
+            { userId: user.id, email: user.email, isAdmin: user.isAdmin, },
             process.env.JWT_SECRET!,
             { expiresIn: "7d" }
         );
 
         return NextResponse.json(
-            { message: "User logged in", userId: user.id, token, isLoggedIn: true },
+            { message: user.isAdmin ? "Admin logged in" : "User logged in", userId: user.id, token, isLoggedIn: true, isAdmin: user.isAdmin, },
             { status: 201 }
         );
 
