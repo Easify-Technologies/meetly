@@ -1,13 +1,14 @@
 'use client';
 
-import React from 'react'
+import React from 'react';
+import Navbar from '@/components/ui/Navbar';
 
 const Page = () => {
-  return (
-    <>
-        
-    </>
-  )
+    return (
+        <>
+            <Navbar />
+        </>
+    )
 }
 
 export default Page
