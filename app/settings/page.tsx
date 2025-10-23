@@ -7,6 +7,10 @@ import { useSession } from 'next-auth/react';
 import Loader from '@/components/ui/loader';
 import { format } from "date-fns";
 import { useProfileDetails } from '../queries/profile';
+import Link from 'next/link';
+import axios from 'axios';
+import { signOut } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 
 const connectionStyles = [
     { label: "I ask questions", value: "ask_questions" },
@@ -46,9 +50,11 @@ const kindOfPeople = [
 
 const Page = () => {
     const { data: session } = useSession();
+    const router = useRouter();
     const email = session?.user?.email ?? "";
 
     const { data: profile, isLoading } = useProfileDetails(email);
+
     const formattedDate = profile?.dateOfBirth
         ? format(new Date(profile.dateOfBirth), "MMMM do, yyyy")
         : "";
@@ -70,6 +76,17 @@ const Page = () => {
     );
 
     if (isLoading) return <Loader />
+
+    const handleLogout = async () => {
+        try {
+            const res = await axios.post("/api/logout", { email });
+            if (res.status === 200) {
+                await signOut({ redirect: true, callbackUrl: "/login" });
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    };
 
     return (
         <>
@@ -351,7 +368,7 @@ const Page = () => {
                                                             </div>
                                                             <div className="flex flex-col w-full gap-2">
                                                                 <div data-orientation="horizontal" role="none" data-slot="separator" className="bg-border shrink-0 data-[orientation=horizontal]:h-px data-[orientation=horizontal]:w-full data-[orientation=vertical]:h-full data-[orientation=vertical]:w-px"></div>
-                                                                <a href="/legal/terms-of-service">
+                                                                <Link href="#">
                                                                     <div className="flex flex-row justify-between px-4 py-1 items-center hover:bg-muted/50 transition-colors">
                                                                         <div className="flex flex-col gap-1">
                                                                             <p className="text-base md:text-lg">Terms of Service</p>
@@ -361,9 +378,9 @@ const Page = () => {
                                                                             <path d="m12 5 7 7-7 7"></path>
                                                                         </svg>
                                                                     </div>
-                                                                </a>
+                                                                </Link>
                                                                 <div data-orientation="horizontal" role="none" data-slot="separator" className="bg-border shrink-0 data-[orientation=horizontal]:h-px data-[orientation=horizontal]:w-full data-[orientation=vertical]:h-full data-[orientation=vertical]:w-px"></div>
-                                                                <a href="/legal/privacy-policy">
+                                                                <Link href="#">
                                                                     <div className="flex flex-row justify-between px-4 py-1 items-center hover:bg-muted/50 transition-colors">
                                                                         <div className="flex flex-col gap-1">
                                                                             <p className="text-base md:text-lg">Privacy Policy</p>
@@ -373,9 +390,9 @@ const Page = () => {
                                                                             <path d="m12 5 7 7-7 7"></path>
                                                                         </svg>
                                                                     </div>
-                                                                </a>
+                                                                </Link>
                                                                 <div data-orientation="horizontal" role="none" data-slot="separator" className="bg-border shrink-0 data-[orientation=horizontal]:h-px data-[orientation=horizontal]:w-full data-[orientation=vertical]:h-full data-[orientation=vertical]:w-px"></div>
-                                                                <a href="/legal/community-guidelines">
+                                                                <Link href="#">
                                                                     <div className="flex flex-row justify-between px-4 py-1 items-center hover:bg-muted/50 transition-colors">
                                                                         <div className="flex flex-col gap-1">
                                                                             <p className="text-base md:text-lg">Community Guidelines</p>
@@ -385,22 +402,28 @@ const Page = () => {
                                                                             <path d="m12 5 7 7-7 7"></path>
                                                                         </svg>
                                                                     </div>
-                                                                </a>
+                                                                </Link>
                                                             </div>
-                                                            <button data-slot="button" className="inline-flex items-center justify-center whitespace-nowrap text-sm md:text-base font-medium transition-all select-none disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg:not([class*='size-'])]:size-4 shrink-0 [&amp;_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive border border-secondary bg-background text-foreground hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50 h-12 px-4 py-2 rounded-full w-full gap-2">
+                                                            <button onClick={handleLogout} data-slot="button" className="inline-flex cursor-pointer items-center justify-center whitespace-nowrap text-sm md:text-base font-medium transition-all select-none disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg:not([class*='size-'])]:size-4 shrink-0 [&amp;_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive border border-secondary bg-background text-foreground hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50 h-12 px-4 py-2 rounded-full w-full gap-2">
                                                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-log-out h-4 w-4" aria-hidden="true">
                                                                     <path d="m16 17 5-5-5-5"></path>
                                                                     <path d="M21 12H9"></path>
                                                                     <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-                                                                </svg>Logout </button>
-                                                            <button data-slot="dialog-trigger" className="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm md:text-base font-medium transition-all select-none disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg:not([class*='size-'])]:size-4 shrink-0 [&amp;_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:hover:bg-accent/50 h-12 px-4 py-2 rounded-full w-full text-destructive hover:text-destructive hover:bg-destructive/10" type="button" aria-haspopup="dialog" aria-expanded="false" aria-controls="radix-«rbh»" data-state="closed">
-                                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-trash2 lucide-trash-2 h-4 w-4 mr-2" aria-hidden="true">
-                                                                    <path d="M3 6h18"></path>
-                                                                    <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
-                                                                    <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
-                                                                    <line x1="10" x2="10" y1="11" y2="17"></line>
-                                                                    <line x1="14" x2="14" y1="11" y2="17"></line>
-                                                                </svg>Delete Account </button>
+                                                                </svg>
+                                                                Logout
+                                                            </button>
+                                                            <div className='pb-16 md:pb-0'>
+                                                                <button data-slot="dialog-trigger" className="inline-flex cursor-pointer items-center justify-center gap-2 whitespace-nowrap text-sm md:text-base font-medium transition-all select-none disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg:not([class*='size-'])]:size-4 shrink-0 [&amp;_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:hover:bg-accent/50 h-12 px-4 py-2 rounded-full w-full text-destructive hover:text-destructive hover:bg-destructive/10" type="button" aria-haspopup="dialog" aria-expanded="false" aria-controls="radix-«rbh»" data-state="closed">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-trash2 lucide-trash-2 h-4 w-4 mr-2" aria-hidden="true">
+                                                                        <path d="M3 6h18"></path>
+                                                                        <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
+                                                                        <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
+                                                                        <line x1="10" x2="10" y1="11" y2="17"></line>
+                                                                        <line x1="14" x2="14" y1="11" y2="17"></line>
+                                                                    </svg>
+                                                                    Delete Account
+                                                                </button>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
