@@ -31,7 +31,7 @@ const Navbar = () => {
             </div>
 
             {/* Mobile Navbar */}
-            <div className="z-50 block lg:hidden absolute bottom-0 left-0 w-full">
+            <div className="z-50 block lg:hidden fixed bottom-0 left-0 w-full">
                 <div className="bg-popover backdrop-blur-xl z-100 mb-1">
                     <div className="relative px-2 py-2 ">
                         <nav className="flex items-center justify-around">
