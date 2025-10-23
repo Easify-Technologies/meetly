@@ -1,7 +1,25 @@
+'use client';
+
 import Image from "next/image";
 import Link from "next/link";
+import Loader from "@/components/ui/loader";
+import { useEffect, useState } from "react";
 
 export default function Home() {
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (loading) {
+    return <Loader />;
+  }
+
   return (
     <>
       <div className="flex flex-col h-full">
