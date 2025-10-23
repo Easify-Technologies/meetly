@@ -2,9 +2,10 @@ import axios, { AxiosError } from "axios";
 
 type ApiError = { error: string };
 
-export async function getProfileDetails() {
+export async function getProfileDetails(data: { userId: string }) {
     try {
-        
+        const res = await axios.post('/api/profile', data);
+        return res.data;
     } catch (error) {
         console.error('Error fetching profile:', error);
         const axiosErr = error as AxiosError<ApiError>;

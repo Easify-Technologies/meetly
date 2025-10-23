@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useFetchCafes } from "@/app/queries/fetch-cafes";
 
+import Loader from "@/components/ui/loader";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
@@ -28,7 +29,7 @@ const Page = () => {
   const { data: cafes = [], isPending } = useFetchCafes(cityId);
   const [selectedCafe, setSelectedCafe] = useState("");
 
-  if (isPending) return <div>Loading...</div>;
+  if (isPending) return <Loader />;
   if (!cafes.length) return <div>No cafes found.</div>;
 
   const locationImage = cafes[0].location.imageUrl;

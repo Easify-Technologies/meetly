@@ -3,8 +3,8 @@
 import React from 'react';
 import Image from "next/image";
 import Link from 'next/link';
+import Loader from '@/components/ui/loader';
 import { useFetchAllLocations } from '../queries/fetch-locations';
-
 interface Locations {
   id: string;
   name: string;
@@ -15,7 +15,7 @@ interface Locations {
 const Page = () => {
   const { data: locations, isPending } = useFetchAllLocations();
 
-  if(isPending) return;
+  if(isPending) return <Loader />;
 
   return (
     <>
