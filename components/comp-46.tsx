@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useId, useState } from "react"
+import React, { useState } from "react"
 import { ChevronDownIcon, PhoneIcon } from "lucide-react"
 import * as RPNInput from "react-phone-number-input"
 import flags from "react-phone-number-input/flags"
@@ -9,20 +9,20 @@ import { cn } from "@/lib/utils"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 
-const PhoneNumberInput = () =>  {
+const PhoneNumberInput = ({ phone }: { phone: string }) =>  {
   const [value, setValue] = useState("");
 
   return (
     <div className="mt-6" dir="ltr">
-      <Label htmlFor="phone_number" className='text-[#2f1107] font-semibold mb-2'>Phone number</Label>
+      <Label htmlFor="phone_number" className='text-[#2f1107] text-base font-semibold mb-2'>Phone number</Label>
       <RPNInput.default
-        className="flex rounded-md shadow-xs mt-2"
+        className="flex shadow-xs mt-2"
         international
         flagComponent={FlagComponent}
         countrySelectComponent={CountrySelect}
         inputComponent={PhoneInput}
         id="phone_number"
-        value={value}
+        value={phone}
         onChange={(newValue) => setValue(newValue ?? "")}
       />
     </div>
@@ -34,7 +34,7 @@ const PhoneInput = ({ className, ...props }: React.ComponentProps<"input">) => {
     <Input
       data-slot="phone-input"
       className={cn(
-        "-ms-px rounded-s-none shadow-none focus-visible:z-10 bg-transparent",
+        "w-full border border-[#2f1107] text-[#2f1107] bg-transparent outline-none text-sm font-semibold p-2",
         className
       )}
       {...props}
@@ -62,7 +62,7 @@ const CountrySelect = ({
   }
 
   return (
-    <div className="relative inline-flex items-center self-stretch rounded-s-md border border-input bg-background py-2 ps-3 pe-2 text-muted-foreground transition-[color,box-shadow] outline-none focus-within:z-10 focus-within:border-ring focus-within:ring-[3px] focus-within:ring-ring/50 hover:bg-accent hover:text-foreground has-disabled:pointer-events-none has-disabled:opacity-50 has-aria-invalid:border-destructive/60 has-aria-invalid:ring-destructive/20 dark:has-aria-invalid:ring-destructive/40">
+    <div className="relative inline-flex items-center self-stretch rounded-md border border-[#2f1107] bg-transparent py-2 ps-3 pe-2 text-muted-foreground transition-[color,box-shadow] outline-none focus-within:z-10 focus-within:border-ring focus-within:ring-[3px] focus-within:ring-ring/50 hover:bg-accent hover:text-foreground has-disabled:pointer-events-none has-disabled:opacity-50 has-aria-invalid:border-destructive/60 has-aria-invalid:ring-destructive/20 dark:has-aria-invalid:ring-destructive/40">
       <div className="inline-flex items-center gap-1" aria-hidden="true">
         <FlagComponent country={value} countryName={value} aria-hidden="true" />
         <span className="text-muted-foreground/80">

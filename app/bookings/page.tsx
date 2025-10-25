@@ -118,11 +118,11 @@ const Page = () => {
                                         data-[state=checked]:text-[#2F1107]"
                                         />
                                       <div className="grid grow gap-2">
-                                        <Label htmlFor={option.id}>
+                                        <Label htmlFor={option.id} className='flex items-center gap-2'>
                                           <h4 className="font-semibold md:text-xl text-lg text-[#2F1107]">
                                             {option.date}
                                           </h4>
-                                          <div className="flex items-start bg-[#2F1107] rounded-full px-3 py-1.5">
+                                          <div className="flex items-start text-center justify-center bg-[#2F1107] rounded-full px-3 py-2">
                                             <span className="text-lg font-medium text-white leading-none">
                                               {option.time}
                                             </span>
