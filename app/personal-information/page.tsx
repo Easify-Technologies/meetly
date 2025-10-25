@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react'
 import Navbar from '@/components/ui/Navbar';
 import Link from 'next/link';
 import { useProfileDetails } from '../queries/profile';
+import { useEditUserDetails } from '../queries/edit-user-details';
 import { useSession } from 'next-auth/react';
 import Loader from '@/components/ui/loader';
 
@@ -23,6 +24,7 @@ const Page = () => {
   const email = session?.user?.email ?? "";
 
   const { data: profile, isLoading } = useProfileDetails(email);
+  const { mutate, isSuccess, isError, error, data } = useEditUserDetails(email);
   const [open, setOpen] = useState(false);
   const [date, setDate] = useState<Date | undefined>(undefined);
 
@@ -35,13 +37,24 @@ const Page = () => {
     gender: "",
   });
 
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSaveChanges = () => {
+    mutate(formData);
+  }
+
   useEffect(() => {
     if (profile) {
+      const [first, ...last] = profile.name.split(" ");
+
       setFormData({
-        first_name: profile.name || "",
-        last_name: profile.name || "",
-        email: profile.email || "",
-        phone_number: profile.phoneNumber || "",
+        first_name: first,
+        last_name: last.join(" "),
+        email: profile.email,
+        phone_number: profile.phoneNumber,
         date_of_birth: profile.dateOfBirth || "",
         gender: profile.gender || "",
       });
@@ -51,11 +64,6 @@ const Page = () => {
       }
     }
   }, [profile]);
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
 
   if (isLoading) return <Loader />;
 
@@ -141,6 +149,9 @@ const Page = () => {
             {/* Phone Number */}
             <PhoneNumberInput
               phone={formData.phone_number}
+              onChange={(value) =>
+                setFormData((prev) => ({ ...prev, phone_number: value }))
+              }
             />
 
             {/* Date of Birth */}
@@ -164,12 +175,12 @@ const Page = () => {
                     mode="single"
                     selected={date}
                     captionLayout="dropdown"
-                    onSelect={(date) => {
-                      setDate(date);
+                    onSelect={(newDate) => {
+                      setDate(newDate);
                       setFormData((prev) => ({
                         ...prev,
-                        date_of_birth: date
-                          ? date.toISOString().split("T")[0]
+                        date_of_birth: newDate
+                          ? newDate.toISOString().split("T")[0]
                           : "",
                       }));
                       setOpen(false);
@@ -209,9 +220,17 @@ const Page = () => {
               </RadioGroup>
             </div>
 
+            {isError && (
+              <p data-slot="form-message" className="text-destructive text-sm font-semibold">{(error as Error).message}</p>
+            )}
+            {isSuccess && data?.message && (
+              <p data-slot="form-message" className="text-green-500 text-sm font-semibold">{data.message}</p>
+            )}
+
             {/* Save Button */}
             <button
               type="button"
+              onClick={handleSaveChanges}
               className="w-full mt-6 bg-[#2f1107] rounded-full text-white transition-colors duration-500 cursor-pointer text-sm font-semibold py-4 hover:bg-[#2f1107]/90"
             >
               Save Changes

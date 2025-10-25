@@ -1,20 +1,28 @@
-"use client"
+"use client";
 
-import React, { useState } from "react"
-import { ChevronDownIcon, PhoneIcon } from "lucide-react"
-import * as RPNInput from "react-phone-number-input"
-import flags from "react-phone-number-input/flags"
+import React from "react";
+import { ChevronDownIcon, PhoneIcon } from "lucide-react";
+import * as RPNInput from "react-phone-number-input";
+import flags from "react-phone-number-input/flags";
 
-import { cn } from "@/lib/utils"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+import { cn } from "@/lib/utils";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
-const PhoneNumberInput = ({ phone }: { phone: string }) =>  {
-  const [value, setValue] = useState("");
+interface PhoneNumberInputProps {
+  phone: string;
+  onChange: (value: string) => void;
+}
 
+const PhoneNumberInput = ({ phone, onChange }: PhoneNumberInputProps) => {
   return (
     <div className="mt-6" dir="ltr">
-      <Label htmlFor="phone_number" className='text-[#2f1107] text-base font-semibold mb-2'>Phone number</Label>
+      <Label
+        htmlFor="phone_number"
+        className="text-[#2f1107] text-base font-semibold mb-2"
+      >
+        Phone number
+      </Label>
       <RPNInput.default
         className="flex shadow-xs mt-2"
         international
@@ -23,11 +31,11 @@ const PhoneNumberInput = ({ phone }: { phone: string }) =>  {
         inputComponent={PhoneInput}
         id="phone_number"
         value={phone}
-        onChange={(newValue) => setValue(newValue ?? "")}
+        onChange={(newValue) => onChange(newValue ?? "")}
       />
     </div>
-  )
-}
+  );
+};
 
 const PhoneInput = ({ className, ...props }: React.ComponentProps<"input">) => {
   return (
@@ -39,17 +47,17 @@ const PhoneInput = ({ className, ...props }: React.ComponentProps<"input">) => {
       )}
       {...props}
     />
-  )
-}
+  );
+};
 
-PhoneInput.displayName = "PhoneInput"
+PhoneInput.displayName = "PhoneInput";
 
 type CountrySelectProps = {
-  disabled?: boolean
-  value: RPNInput.Country
-  onChange: (value: RPNInput.Country) => void
-  options: { label: string; value: RPNInput.Country | undefined }[]
-}
+  disabled?: boolean;
+  value: RPNInput.Country;
+  onChange: (value: RPNInput.Country) => void;
+  options: { label: string; value: RPNInput.Country | undefined }[];
+};
 
 const CountrySelect = ({
   disabled,
@@ -58,8 +66,8 @@ const CountrySelect = ({
   options,
 }: CountrySelectProps) => {
   const handleSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    onChange(event.target.value as RPNInput.Country)
-  }
+    onChange(event.target.value as RPNInput.Country);
+  };
 
   return (
     <div className="relative inline-flex items-center self-stretch rounded-md border border-[#2f1107] bg-transparent py-2 ps-3 pe-2 text-muted-foreground transition-[color,box-shadow] outline-none focus-within:z-10 focus-within:border-ring focus-within:ring-[3px] focus-within:ring-ring/50 hover:bg-accent hover:text-foreground has-disabled:pointer-events-none has-disabled:opacity-50 has-aria-invalid:border-destructive/60 has-aria-invalid:ring-destructive/20 dark:has-aria-invalid:ring-destructive/40">
@@ -90,11 +98,11 @@ const CountrySelect = ({
           ))}
       </select>
     </div>
-  )
-}
+  );
+};
 
 const FlagComponent = ({ country, countryName }: RPNInput.FlagProps) => {
-  const Flag = flags[country]
+  const Flag = flags[country];
 
   return (
     <span className="w-5 overflow-hidden rounded-sm">
@@ -104,7 +112,7 @@ const FlagComponent = ({ country, countryName }: RPNInput.FlagProps) => {
         <PhoneIcon size={16} aria-hidden="true" />
       )}
     </span>
-  )
-}
+  );
+};
 
 export default PhoneNumberInput;
