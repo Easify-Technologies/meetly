@@ -41,7 +41,7 @@ export async function POST(request: NextResponse) {
         );
 
         return NextResponse.json(
-            { message: user.isAdmin ? "Admin logged in" : "User logged in", userId: user.id, token, isLoggedIn: true, isAdmin: user.isAdmin, },
+            { message: user, userId: user.id, token, isLoggedIn: true, },
             { status: 201 }
         );
     } catch (error) {

@@ -8,7 +8,7 @@ import fs from "fs";
 export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData();
-    
+
     const city = formData.get("city") as string;
     const country = formData.get("country") as string;
     const file = formData.get("imageUrl") as File;
@@ -50,5 +50,15 @@ export async function POST(request: NextRequest) {
       { message: "Error adding location", error: error.message },
       { status: 500 }
     );
+  }
+}
+
+export async function GET(request: NextRequest) {
+  try {
+    const locations = await prisma.location.findMany();
+    return NextResponse.json({ locations }, { status: 200 })
+  } catch (error: any) {
+    console.error(error);
+    return NextResponse.json({ message: "Error fetching locations", error: error.message }, { status: 500 });
   }
 }

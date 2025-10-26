@@ -9,7 +9,7 @@ export function useAdminLogin() {
   return useMutation({
     mutationFn: adminLogin,
     onSuccess: () => {
-      router.push("/dashboard");
+      router.push("/admin/dashboard");
     },
   });
 }

@@ -38,11 +38,21 @@ export async function POST(request: NextRequest) {
             { status: 201 }
         );
 
-    } catch (error:any) {
+    } catch (error: any) {
         console.error(error);
         return NextResponse.json(
             { message: "Error adding cafe", error: error.message },
             { status: 500 }
         );
+    }
+}
+
+export async function GET(request: NextRequest) {
+    try {
+        const cafes = await prisma.cafe.findMany();
+        return NextResponse.json({ cafes }, { status: 200 })
+    } catch (error:any) {
+        console.error(error);
+        return NextResponse.json({ message: "Error fetching cafes", error: error.message }, { status: 500 });
     }
 }
