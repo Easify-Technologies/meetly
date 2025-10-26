@@ -10,7 +10,7 @@ export async function POST(request: NextResponse) {
 
         if (!email || !password) {
             return NextResponse.json(
-                { message: "All fields are required", isLoggedIn: false },
+                { error: "All fields are required", isLoggedIn: false },
                 { status: 400 }
             )
         }
@@ -18,14 +18,14 @@ export async function POST(request: NextResponse) {
         const user = await prisma.user.findUnique({ where: { email } });
         if (!user) {
             return NextResponse.json(
-                { message: "Invalid Credentials", isLoggedIn: false },
+                { error: "Invalid Credentials", isLoggedIn: false },
                 { status: 400 }
             );
         }
 
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) return NextResponse.json(
-            { message: "Invalid Credentials", isLoggedIn: false },
+            { error: "Invalid Credentials", isLoggedIn: false },
             { status: 400 }
         );
 
@@ -35,8 +35,8 @@ export async function POST(request: NextResponse) {
         });
 
         const token = jwt.sign(
-            { userId: user.id, email: user.email, isAdmin: user.isAdmin, },
-            process.env.JWT_SECRET!,
+            { userId: user.id, email: user.email },
+            process.env.NEXTAUTH_SECRET!,
             { expiresIn: "7d" }
         );
 
@@ -44,11 +44,10 @@ export async function POST(request: NextResponse) {
             { message: user.isAdmin ? "Admin logged in" : "User logged in", userId: user.id, token, isLoggedIn: true, isAdmin: user.isAdmin, },
             { status: 201 }
         );
-
-    } catch (error: any) {
+    } catch (error) {
         console.error(error);
         return NextResponse.json(
-            { message: "Something went wrong", error: error.message, isLoggedIn: true },
+            { error: "Something went wrong", isLoggedIn: false },
             { status: 500 }
         );
     }

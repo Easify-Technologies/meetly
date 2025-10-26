@@ -14,7 +14,6 @@ export async function POST(request: NextRequest) {
             include: {
                 location: {
                     select: {
-                        name: true,
                         country: true,
                         imageUrl: true,
                     }

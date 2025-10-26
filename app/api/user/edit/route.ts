@@ -1,70 +1,50 @@
-import { NextRequest, NextResponse } from "next/server";
-import jwt from "jsonwebtoken";
+import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
-export async function PUT(request: NextRequest) {
-    try {
-        const authHeader = request.headers.get("Authorization");
-        if (!authHeader || !authHeader.startsWith("Bearer ")) {
-            return NextResponse.json({ message: "No token provided" }, { status: 401 });
-        }
+export async function PUT(req: Request) {
+  try {
+    const body = await req.json();
+    const { payload, userId } = body;
 
-        const token = authHeader.split(" ")[1];
-        let payload: any;
-
-        try {
-            payload = jwt.verify(token, process.env.JWT_SECRET!);
-        } catch (error) {
-            return NextResponse.json({ message: "Invalid or expired token" }, { status: 401 });
-        }
-
-        const body = await request.json();
-
-        const allowedFields = [
-            "name",
-            "phoneNumber",
-            "gender",
-            "dateOfBirth",
-            "country",
-            "city",
-            "connectionStyles",
-            "communicationStyles",
-            "socialStyles",
-            "healthAndFitness",
-            "family",
-            "spirituality",
-            "politicalNews",
-            "incorrectHumor",
-            "kindOfPeople",
-            "password",
-        ];
-
-        const dataToUpdate: any = {};
-        for (const field of allowedFields) {
-            if (body[field] !== undefined) {
-                dataToUpdate[field] = body[field];
-            }
-        }
-
-        if (dataToUpdate.password) {
-            const bcrypt = await import("bcrypt");
-            dataToUpdate.password = await bcrypt.hash(dataToUpdate.password, 10);
-        }
-
-        const updatedUser = await prisma.user.update({
-            where: { id: payload.userId },
-            data: dataToUpdate,
-        });
-
-        return NextResponse.json({
-            message: "User updated successfully",
-            user: updatedUser,
-        });
-    } catch (error: any) {
-        console.error(error);
-        return NextResponse.json(
-            { message: "Something went wrong", error: error.message },
-            { status: 500 }
-        );
+    // Combine first_name + last_name → name (if present)
+    let dataToUpdate: any = { ...payload };
+    if (payload.first_name || payload.last_name) {
+      const fullName = `${payload.first_name ?? ""} ${payload.last_name ?? ""}`.trim();
+      dataToUpdate.name = fullName;
+      delete dataToUpdate.first_name;
+      delete dataToUpdate.last_name;
     }
+
+    // ✅ Rename fields to match Prisma model
+    if (payload.phone_number) {
+      dataToUpdate.phoneNumber = payload.phone_number;
+      delete dataToUpdate.phone_number;
+    }
+    if (payload.date_of_birth) {
+      dataToUpdate.dateOfBirth = payload.date_of_birth;
+      delete dataToUpdate.date_of_birth;
+    }
+
+    // Filter empty fields (partial update)
+    const filteredData = Object.fromEntries(
+      Object.entries(dataToUpdate).filter(([_, v]) => v !== "" && v !== undefined)
+    );
+
+    const updatedUser = await prisma.user.update({
+      where: { email: userId},
+      data: filteredData,
+    });
+
+    return NextResponse.json({
+      success: true,
+      message: "User updated successfully",
+      user: updatedUser,
+    });
+  } catch (error: any) {
+    console.error("User update error:", error);
+    return NextResponse.json(
+      { error: error.message || "Something went wrong" },
+      { status: 500 }
+    );
+  }
 }

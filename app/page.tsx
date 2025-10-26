@@ -1,7 +1,25 @@
+'use client';
+
 import Image from "next/image";
 import Link from "next/link";
+import Loader from "@/components/ui/loader";
+import { useEffect, useState } from "react";
 
 export default function Home() {
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (loading) {
+    return <Loader />;
+  }
+
   return (
     <>
       <div className="flex flex-col h-full">
@@ -39,7 +57,7 @@ export default function Home() {
                   <div className="p-4 py-0 bg-background flex flex-col gap-4">
                     <div className="flex flex-col gap-4 md:hidden mb-2">
                       <Link href="/get-started" className="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm md:text-base font-medium transition-all select-none disabled:pointer-events-none bg-[#FFD100] hover:bg-[#2F1107] hover:text-[#FFD100] text-[#2F1107] duration-500 h-12 px-4 py-2 rounded-full w-full">Get Started</Link>
-                      <Link href="#" className="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm md:text-base font-medium transition-all select-none disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg:not([class*='size-'])]:size-4 shrink-0 [&amp;_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive underline-offset-4 hover:underline rounded-full mx-auto w-fit h-fit p-0">Sign in</Link>
+                      <Link href="/login" className="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm md:text-base font-medium transition-all select-none disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg:not([class*='size-'])]:size-4 shrink-0 [&amp;_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive underline-offset-4 hover:underline rounded-full mx-auto w-fit h-fit p-0">Sign in</Link>
                     </div>
                     <p className="text-xs text-muted-foreground text-center font-medium">By signing up you agree to the <Link href="#" className="text-foreground">Terms of Service</Link>, <Link href="#" className="text-foreground">Privacy Policy</Link>, and <Link href="#" className="text-foreground">Community Guidelines</Link>. </p>
                   </div>

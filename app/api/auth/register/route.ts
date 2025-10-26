@@ -63,13 +63,13 @@ export async function POST(request: Request) {
     }
 
     const getCity = await prisma.location.findUnique({
-        where: {
-            id: city_id
-        },
-        select: {
-            city: true,
-            country: true
-        }
+      where: {
+        id: city_id,
+      },
+      select: {
+        city: true,
+        country: true,
+      },
     });
 
     // Hash password
@@ -95,19 +95,20 @@ export async function POST(request: Request) {
         incorrectHumor: humor.toString(),
         kindOfPeople: peopleType,
         password: hashedPassword,
-        isLoggedIn: true
+        isLoggedIn: true,
       },
     });
 
     // Generate JWT token
     const token = jwt.sign(
       { userId: user.id, email: user.email },
-      process.env.JWT_SECRET!,
+      process.env.NEXTAUTH_SECRET!,
       { expiresIn: "7d" }
     );
 
     return NextResponse.json(
       {
+        success: true,
         message: "User created successfully",
         userId: user.id,
         token,

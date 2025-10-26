@@ -3,42 +3,42 @@ const prisma = new PrismaClient();
 
 const locations = [
   {
-    name: "Metro Manila",
+    city: "Metro Manila",
     country: "Philippines",
     imageUrl: "/location/photo-1754388298164-4db76ebc1276.jpeg",
   },
   {
-    name: "Jakarta",
+    city: "Jakarta",
     country: "Indonesia",
     imageUrl: "/location/photo-1670163297171-075c1bbad3b0.jpeg",
   },
   {
-    name: "Seoul",
+    city: "Seoul",
     country: "South Korea",
     imageUrl: "/location/photo-1735253499196-8f261d5551c4.jpeg",
   },
   {
-    name: "Bali",
+    city: "Denpasar",
     country: "Indonesia",
     imageUrl: "/location/photo-1655100021097-372e99cd9965.jpeg",
   },
   {
-    name: "Osaka",
+    city: "Osaka",
     country: "Japan",
     imageUrl: "/location/photo-1746431565053-87d6cc1c4e50.jpeg",
   },
   {
-    name: "Kyoto",
+    city: "Kyoto",
     country: "Japan",
     imageUrl: "/location/photo-1588677979404-ff19ee781344.jpeg",
   },
   {
-    name: "Tokyo",
+    city: "Tokyo",
     country: "Japan",
     imageUrl: "/location/photo-1699444116939-41ecae88b19a.jpeg",
   },
   {
-    name: "Stockholm",
+    city: "Stockholm",
     country: "Sweden",
     imageUrl: "/location/photo-1645096685522-5de4fd482ffd.jpeg",
   },
@@ -50,8 +50,9 @@ async function main() {
   for (const loc of locations) {
     const cafes = Array.from({ length: Math.floor(Math.random() * 3) + 2 }).map(
       (_, i) => ({
-        name: `${loc.name} Cafe ${i + 1}`,
-        address: `Street ${i + 1}, ${loc.name}`,
+        name: `${loc.city} Cafe ${i + 1}`,
+        address: `Street ${i + 1}, ${loc.city}`,
+        imageUrl: `/cafe/default-cafe-${(i % 3) + 1}.jpg`,
       })
     );
 

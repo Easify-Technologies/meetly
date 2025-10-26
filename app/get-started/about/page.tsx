@@ -68,12 +68,19 @@ const Page = () => {
                                                 setFormData((prev) => ({ ...prev, gender: value }))
                                             }
                                         >
-                                            <label className="relative w-1/2 flex cursor-pointer flex-col items-center gap-3 rounded-full border border-input px-2 py-5 text-center shadow-xs transition-all">
-                                                <RadioGroupItem id="male" value="male" className="sr-only after:absolute after:inset-0" />
+                                            <label
+                                                htmlFor="male"
+                                                className="relative w-1/2 flex cursor-pointer flex-col items-center gap-3 rounded-full border border-input px-2 py-5 text-center shadow-xs transition-all has-[input:checked]:bg-blue-100 has-[input:checked]:border-blue-500"
+                                            >
+                                                <RadioGroupItem id="male" value="male" className="sr-only" />
                                                 <p className="text-sm leading-none font-bold text-foreground">Male</p>
                                             </label>
-                                            <label className="relative w-1/2 flex cursor-pointer flex-col items-center gap-3 rounded-full border border-input px-2 py-5 text-center shadow-xs transition-all">
-                                                <RadioGroupItem id="female" value="female" className="sr-only after:absolute after:inset-0" />
+
+                                            <label
+                                                htmlFor="female"
+                                                className="relative w-1/2 flex cursor-pointer flex-col items-center gap-3 rounded-full border border-input px-2 py-5 text-center shadow-xs transition-all has-[input:checked]:bg-pink-100 has-[input:checked]:border-pink-500"
+                                            >
+                                                <RadioGroupItem id="female" value="female" className="sr-only" />
                                                 <p className="text-sm leading-none font-bold text-foreground">Female</p>
                                             </label>
                                         </RadioGroup>
