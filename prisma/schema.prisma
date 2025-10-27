@@ -29,7 +29,11 @@ model User {
   isLoggedIn          Boolean  @default(false)
   createdAt           DateTime @default(now())
   cafeId              String?  @db.ObjectId
+
   cafe Cafe? @relation(fields: [cafeId], references: [id])
+
+  // Explicit relation to events via participants
+  eventParticipants EventParticipant[]
 }
 
 model Location {
@@ -51,11 +55,43 @@ model Cafe {
 
   location Location @relation(fields: [locationId], references: [id])
   users    User[]
+  events   Event[]
+}
+
+model Event {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  date       DateTime
+  city       String
+  country    String
+  cafeId     String?  @db.ObjectId
+  cafe       Cafe?    @relation(fields: [cafeId], references: [id])
+  createdAt  DateTime @default(now())
+  isClosed   Boolean  @default(false)
+
+  // The admin who created the event
+  createdBy  String   @db.ObjectId
+  admin      Admin    @relation(fields: [createdBy], references: [id])
+
+  // Users who joined this event
+  participants EventParticipant[]
+}
+
+model EventParticipant {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String   @db.ObjectId
+  eventId   String   @db.ObjectId
+  joinedAt  DateTime @default(now())
+
+  user  User  @relation(fields: [userId], references: [id])
+  event Event @relation(fields: [eventId], references: [id])
 }
 
 model Admin {
-  id          String @id @default(auto()) @map("_id") @db.ObjectId
-  email       String @unique
-  password    String
-  isLoggedIn  Boolean  @default(false)
+  id         String  @id @default(auto()) @map("_id") @db.ObjectId
+  email      String  @unique
+  password   String
+  isLoggedIn Boolean @default(false)
+
+  // List of events created by this admin
+  events Event[]
 }
