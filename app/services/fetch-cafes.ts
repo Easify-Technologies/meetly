@@ -13,3 +13,15 @@ export async function fetchCafes(locationId: string) {
     );
   }
 }
+
+export async function allCafes() {
+  try {
+    const res = await axios.get('/api/cafe');
+    return res.data;
+  } catch (error) {
+    const axiosErr = error as AxiosError<ApiError>;
+    throw new Error(
+      axiosErr.response?.data?.error || "Something went wrong"
+    );
+  }
+}

@@ -92,12 +92,12 @@ const Page = () => {
                           <div className="space-y-6 h-full">
                             <form className="h-full flex flex-col">
                               <div className="space-y-6 flex-1">
-                                <div className="text-center">
+                                {/* <div className="text-center">
                                   <h2 className="text-4xl md:text-5xl lg:text-6xl">Book your next Kin</h2>
                                   <div className="flex items-center justify-center gap-2 mt-5">
                                     <p className="text-base md:text-lg text-muted-foreground">5 people are waiting for you</p>
                                   </div>
-                                </div>
+                                </div> */}
                                 <RadioGroup
                                   className="grid gap-3 outline-none"
                                   onValueChange={(value) => setBooking(value)}
