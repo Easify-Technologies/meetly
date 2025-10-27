@@ -5,27 +5,27 @@ import { prisma } from "@/lib/prisma";
 export async function POST(request: NextRequest) {
   try {
     // --- JWT VALIDATION ---
-    const authHeader = request.headers.get("Authorization");
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      return NextResponse.json({ message: "No token provided" }, { status: 401 });
-    }
+    // const authHeader = request.headers.get("Authorization");
+    // if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    //   return NextResponse.json({ message: "No token provided" }, { status: 401 });
+    // }
 
-    const token = authHeader.split(" ")[1];
-    let payload: any;
+    // const token = authHeader.split(" ")[1];
+    // let payload: any;
 
-    try {
-      payload = jwt.verify(token, process.env.JWT_SECRET!);
-    } catch (error) {
-      return NextResponse.json({ message: "Invalid or expired token" }, { status: 401 });
-    }
+    // try {
+    //   payload = jwt.verify(token, process.env.NEXTAUTH_SECRET!);
+    // } catch (error) {
+    //   return NextResponse.json({ message: "Invalid or expired token" }, { status: 401 });
+    // }
 
-    // --- ADMIN VALIDATION ---
-    const admin = await prisma.admin.findUnique({
-      where: { id: payload.adminId },
-    });
-    if (!admin) {
-      return NextResponse.json({ message: "Only admins can create events" }, { status: 403 });
-    }
+    // // --- ADMIN VALIDATION ---
+    // const admin = await prisma.admin.findUnique({
+    //   where: { id: payload.adminId },
+    // });
+    // if (!admin) {
+    //   return NextResponse.json({ message: "Only admins can create events" }, { status: 403 });
+    // }
 
     // --- BODY VALIDATION ---
     const body = await request.json();
@@ -33,19 +33,24 @@ export async function POST(request: NextRequest) {
 
     if (!date || !city || !country) {
       return NextResponse.json(
-        { message: "Date, city, and country are required" },
+        { error: "Date, city, and country are required" },
         { status: 400 }
       );
     }
 
+    const selectedDate = new Date(date);
+    const now = new Date();
+
+    selectedDate.setHours(now.getHours(), now.getMinutes(), now.getSeconds(), now.getMilliseconds());
+
     // --- CREATE EVENT ---
     const event = await prisma.event.create({
       data: {
-        date: new Date(date),
+        date: selectedDate,
         city,
         country,
         cafeId: cafeId || null,
-        createdBy: admin.id,
+        createdBy: "68fe04fc214c35383d3a8ebd",
       },
       include: {
         cafe: true,
