@@ -16,7 +16,7 @@ export async function GET() {
       },
       include: {
         cafe: true,
-      },
+      }
     });
 
     for (const event of events) {
@@ -45,6 +45,7 @@ export async function GET() {
     }
 
     return NextResponse.json({
+      events,
       success: true,
       message: "Groups formed and emails sent",
     });

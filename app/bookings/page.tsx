@@ -9,6 +9,7 @@ import { useProfileDetails } from '../queries/profile';
 import Loader from '@/components/ui/loader';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
+import { useGetAllEvents } from '../queries/get-events';
 
 const bookingOptions = [
   {
@@ -34,6 +35,8 @@ const Page = () => {
 
   const [booking, setBooking] = useState("");
   const { data: profile, isLoading } = useProfileDetails(userId);
+  const { data: events } = useGetAllEvents();
+  console.log(events);
 
   if (isLoading) return <Loader />
 
