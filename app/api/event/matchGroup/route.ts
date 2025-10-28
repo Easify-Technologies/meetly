@@ -7,11 +7,18 @@ import { formEventGroups } from "@/lib/matchGroup";
 export async function GET() {
   try {
     const now = new Date();
-    const in48h = new Date(now.getTime() + 48 * 60 * 60 * 1000);
+    const inNDays = (n: number) => new Date(now.getTime() + n * 24 * 60 * 60 * 1000);
+
+    const in2Days = inNDays(2);
+    const in3Days = inNDays(3);
+    const in4Days = inNDays(4);
 
     const events = await prisma.event.findMany({
       where: {
-        date: { lte: in48h },
+        date: {
+          gte: in2Days,
+          lte: in4Days
+        },
         isClosed: false,
       },
       include: {
@@ -26,15 +33,15 @@ export async function GET() {
         const to = group.map((u) => u.email);
         const groupNames = group.map((u) => u.name).join(", ");
 
-        await sendMeetupEmail({
-          to,
-          groupNames,
-          cafe: {
-            name: event.cafe?.name || "Unknown Café",
-            address: event.cafe?.address || "TBD",
-          },
-          date: event.date.toISOString(),
-        });
+        // await sendMeetupEmail({
+        //   to,
+        //   groupNames,
+        //   cafe: {
+        //     name: event.cafe?.name || "Unknown Café",
+        //     address: event.cafe?.address || "TBD",
+        //   },
+        //   date: event.date.toISOString(),
+        // });
       }
 
       // Close booking
