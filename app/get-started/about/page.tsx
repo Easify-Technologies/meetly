@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import Image from "next/image";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import {
     Popover,
@@ -12,6 +12,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { ChevronDownIcon } from "lucide-react";
+import { Label } from "@/components/ui/label";
 
 const Page = () => {
     const router = useRouter();
@@ -64,26 +65,46 @@ const Page = () => {
                                         <h1 className="text-2xl md:text-3xl lg:text-4xl text-[#2F1107] font-semibold">What gender are you?</h1>
                                         <RadioGroup
                                             className="flex gap-2 items-center justify-center w-full mx-auto py-3"
-                                            onValueChange={(value) =>
-                                                setFormData((prev) => ({ ...prev, gender: value }))
-                                            }
+                                            value={formData.gender}
+                                            onValueChange={(value) => setFormData((p) => ({ ...p, gender: value }))}
                                         >
-                                            <label
+                                            <Label
                                                 htmlFor="male"
-                                                className="relative w-1/2 flex cursor-pointer flex-col items-center gap-3 rounded-full border border-input px-2 py-5 text-center shadow-xs transition-all has-[input:checked]:bg-blue-100 has-[input:checked]:border-blue-500"
+                                                className="relative w-1/2 flex cursor-pointer flex-col items-center gap-3 rounded-full border border-input px-2 py-5 text-center shadow-xs transition-all
+                                                data-[state=checked]:bg-blue-100
+                                                data-[state=checked]:border-blue-500
+                                                focus-within:ring-2
+                                                focus-within:ring-blue-300"
                                             >
-                                                <RadioGroupItem id="male" value="male" className="sr-only" />
-                                                <p className="text-sm leading-none font-bold text-foreground">Male</p>
-                                            </label>
+                                                <RadioGroupItem
+                                                    value="male"
+                                                    id="male"
+                                                    className="sr-only peer"
+                                                />
+                                                <span className="text-sm leading-none font-bold text-foreground peer-data-[state=checked]:text-blue-700">
+                                                    Male
+                                                </span>
+                                            </Label>
 
-                                            <label
+                                            <Label
                                                 htmlFor="female"
-                                                className="relative w-1/2 flex cursor-pointer flex-col items-center gap-3 rounded-full border border-input px-2 py-5 text-center shadow-xs transition-all has-[input:checked]:bg-pink-100 has-[input:checked]:border-pink-500"
+                                                className="relative w-1/2 flex cursor-pointer flex-col items-center gap-3 rounded-full border border-input px-2 py-5 text-center shadow-xs transition-all
+                                                data-[state=checked]:bg-pink-100
+                                                data-[state=checked]:border-pink-500
+                                                focus-within:ring-2
+                                                focus-within:ring-pink-300"
                                             >
-                                                <RadioGroupItem id="female" value="female" className="sr-only" />
-                                                <p className="text-sm leading-none font-bold text-foreground">Female</p>
-                                            </label>
+                                                <RadioGroupItem
+                                                    value="female"
+                                                    id="female"
+                                                    className="sr-only peer"
+                                                />
+                                                <span className="text-sm leading-none font-bold text-foreground peer-data-[state=checked]:text-pink-700">
+                                                    Female
+                                                </span>
+                                            </Label>
                                         </RadioGroup>
+
                                         <div className='py-6 border-t border-[#f7f0f2]'>
                                             <h1 className="text-2xl md:text-3xl lg:text-4xl text-[#2F1107] font-semibold">What is your date of birth?</h1>
                                             <Popover open={open} onOpenChange={setOpen}>
