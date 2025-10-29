@@ -79,12 +79,6 @@ const Page = () => {
                           <div className="space-y-6 h-full">
                             <form className="h-full flex flex-col">
                               <div className="space-y-6 flex-1">
-                                {/* <div className="text-center">
-                                  <h2 className="text-4xl md:text-5xl lg:text-6xl">Book your next Kin</h2>
-                                  <div className="flex items-center justify-center gap-2 mt-5">
-                                    <p className="text-base md:text-lg text-muted-foreground">5 people are waiting for you</p>
-                                  </div>
-                                </div> */}
                                 <RadioGroup
                                   className="grid gap-3 outline-none"
                                   onValueChange={(value) => setBooking(value)}
@@ -129,7 +123,7 @@ const Page = () => {
                                 </RadioGroup>
                               </div>
                               <div className="shrink-0 pt-6 pb-4">
-                                <button className="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm md:text-base font-medium transition-all outline-none bg-[#FFD100] text-[#2F1107] hover:bg-[#FFD100]/80 h-12 px-4 py-2 rounded-full w-full cursor-pointer" type="button">
+                                <button className={`inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm md:text-base font-medium transition-all outline-none ${profile?.isVerified ? "bg-[#FFD100] text-[#2F1107] hover:bg-[#FFD100]/80 cursor-pointer" : "bg-muted text-muted-foreground cursor-not-allowed"} h-12 px-4 py-2 rounded-full w-full`} disabled={!profile?.isVerified} type="button">
                                   Book my seat
                                 </button>
                               </div>
