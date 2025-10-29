@@ -4,14 +4,17 @@ import React, { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 
+import { useVerifyOTP } from '../queries/verify-otp';
 import {
     InputOTP,
     InputOTPGroup,
     InputOTPSlot,
-} from "@/components/ui/input-otp"
+} from "@/components/ui/input-otp";
 
 const Page = () => {
-    const [value, setValue] = useState("");
+    const [otp, setOtp] = useState("");
+
+    const { mutate, isPending, isSuccess, isError, data, error } = useVerifyOTP();
 
     return (
         <>
@@ -40,8 +43,8 @@ const Page = () => {
                                 <div className="space-y-2 text-center">
                                     <InputOTP
                                         maxLength={6}
-                                        value={value}
-                                        onChange={(value) => setValue(value)}
+                                        value={otp}
+                                        onChange={(value) => setOtp(value)}
                                     >
                                         <InputOTPGroup>
                                             <InputOTPSlot index={0} />
@@ -53,23 +56,25 @@ const Page = () => {
                                         </InputOTPGroup>
                                     </InputOTP>
                                     <div className="text-center mt-3 text-[#2f1107] font-semibold text-sm">
-                                        {value === "" ? (
+                                        {otp === "" ? (
                                             <>Enter your one-time password.</>
                                         ) : (
-                                            <>You entered: {value}</>
+                                            <>You entered: {otp}</>
                                         )}
                                     </div>
                                 </div>
                             </div>
-                            {/* {isError && (
+                            {isError && (
                                 <p data-slot="form-message" className="text-destructive text-sm">{(error as Error).message}</p>
                             )}
                             {isSuccess && data?.message && (
                                 <p data-slot="form-message" className="text-green-500 text-sm">{data.message}</p>
-                            )} */}
+                            )}
                         </div>
                         <div className="flex-1 flex flex-col gap-4 justify-center items-center">
-                            <button className="inline-flex items-center justify-center gap-2 whitespace-nowrap cursor-pointer text-sm md:text-base font-medium transition-all bg-[#FFD100] text-[#2f1107] hover:bg-[#FFD100]/90 h-12 px-4 py-2 rounded-full w-full" type="button">Verify</button>
+                            <button onClick={() => mutate({ otp })} className="inline-flex items-center justify-center gap-2 whitespace-nowrap cursor-pointer text-sm md:text-base font-medium transition-all bg-[#FFD100] text-[#2f1107] hover:bg-[#FFD100]/90 h-12 px-4 py-2 rounded-full w-full" type="button" disabled={isPending}>
+                                {isPending ? "Verifying..." : "Verify"}
+                            </button>
                         </div>
                     </form>
                 </div>
