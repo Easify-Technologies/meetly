@@ -2,6 +2,7 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
+import { prisma } from "@/lib/prisma";
 
 export async function POST(request: NextRequest) {
   try {
@@ -14,10 +15,17 @@ export async function POST(request: NextRequest) {
 
     const cookie = (await cookies()).get("email_otp");
     if (!cookie) {
-      return NextResponse.json({ error: "OTP expired or missing" }, { status: 400 });
+      return NextResponse.json(
+        { error: "OTP expired or missing" },
+        { status: 400 }
+      );
     }
 
-    const { otp: storedOtp, expiresAt } = JSON.parse(cookie.value);
+    const {
+      email: storedEmail,
+      otp: storedOtp,
+      expiresAt,
+    } = JSON.parse(cookie.value);
 
     if (new Date(expiresAt) < new Date()) {
       (await cookies()).delete("email_otp");
@@ -29,6 +37,10 @@ export async function POST(request: NextRequest) {
     }
 
     (await cookies()).delete("email_otp");
+    await prisma.user.update({
+      where: { email: storedEmail },
+      data: { isVerified: true },
+    });
 
     return NextResponse.json({ message: "OTP verified successfully" });
   } catch (error) {
