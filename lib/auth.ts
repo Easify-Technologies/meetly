@@ -7,7 +7,6 @@ export interface AuthPayload {
   isAdmin?: boolean;
 }
 
-
 export function verifyAuthToken(req: NextRequest): AuthPayload | null {
   const authHeader = req.headers.get("Authorization");
 
@@ -18,7 +17,7 @@ export function verifyAuthToken(req: NextRequest): AuthPayload | null {
   const token = authHeader.split(" ")[1];
 
   try {
-    const payload = jwt.verify(token, process.env.JWT_SECRET!) as AuthPayload;
+    const payload = jwt.verify(token, process.env.NEXTAUTH_SECRET!) as AuthPayload;
     return payload;
   } catch {
     return null;
