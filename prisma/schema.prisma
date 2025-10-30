@@ -75,6 +75,8 @@ model Event {
 
   // Users who joined this event
   participants EventParticipant[]
+
+  matchGroups MatchGroup[]
 }
 
 model EventParticipant {
@@ -86,6 +88,16 @@ model EventParticipant {
   user  User  @relation(fields: [userId], references: [id])
   event Event @relation(fields: [eventId], references: [id])
 }
+
+model MatchGroup {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  eventId   String   @db.ObjectId
+  members   String[]
+  createdAt DateTime @default(now())
+
+  event Event @relation(fields: [eventId], references: [id])
+}
+
 
 model Admin {
   id         String  @id @default(auto()) @map("_id") @db.ObjectId

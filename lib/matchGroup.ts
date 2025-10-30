@@ -1,9 +1,11 @@
+// lib/matchGroup.ts
 import { prisma } from "@/lib/prisma";
 
 export type MatchUser = {
   id: string;
   name: string;
   email: string;
+  gender?: string;
   connectionStyles: string;
   communicationStyles: string;
   socialStyles: string;
@@ -40,6 +42,9 @@ function computeScore(u: MatchUser, c: MatchUser): number {
   return score;
 }
 
+/**
+ * Forms groups for an event and saves them in the MatchGroup table.
+ */
 export async function formEventGroups(eventId: string) {
   const participants = await prisma.eventParticipant.findMany({
     where: { eventId },
@@ -47,25 +52,51 @@ export async function formEventGroups(eventId: string) {
   });
 
   const users: MatchUser[] = participants.map((p) => p.user as MatchUser);
-  const groups: MatchUser[][] = [];
+  if (users.length === 0) return [];
+
+  const females = users.filter((u) => u.gender?.toLowerCase() === "female");
+  const males = users.filter((u) => u.gender?.toLowerCase() === "male");
+  const others = users.filter(
+    (u) => u.gender?.toLowerCase() !== "female" && u.gender?.toLowerCase() !== "male"
+  );
+
+  const allUsers = [...females, ...males, ...others];
   const used = new Set<string>();
+  const groups: MatchUser[][] = [];
 
-  for (let i = 0; i < users.length; i++) {
-    if (used.has(users[i].id)) continue;
-    const seed = users[i];
+  for (let i = 0; i < allUsers.length; i++) {
+    if (used.has(allUsers[i].id)) continue;
+    const seed = allUsers[i];
 
-    const candidates = users
+    const candidates = allUsers
       .filter((u) => u.id !== seed.id && !used.has(u.id))
       .map((u) => ({
         ...u,
         score: computeScore(seed, u),
       }))
       .sort((a, b) => b.score - a.score)
-      .slice(0, 3); // 3–4 members total per group
+      .slice(0, 3); // 4 per group total
 
     const group = [seed, ...candidates];
+
+    // 🟣 ensure at least one female if possible
+    if (!group.some((u) => u.gender?.toLowerCase() === "female") && females.length > 0) {
+      const extraFemale = females.find((f) => !used.has(f.id));
+      if (extraFemale) group.push(extraFemale);
+    }
+
     group.forEach((u) => used.add(u.id));
     groups.push(group);
+  }
+
+  // 💾 Save groups in the DB
+  for (const group of groups) {
+    await prisma.matchGroup.create({
+      data: {
+        eventId,
+        members: group.map((u) => u.id),
+      },
+    });
   }
 
   return groups;

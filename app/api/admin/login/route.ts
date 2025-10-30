@@ -3,7 +3,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import jwt from "jsonwebtoken";
-// import bcrypt from "bcrypt";
+import bcrypt from "bcrypt";
 
 export async function POST(req: NextRequest) {
     try {
@@ -20,7 +20,6 @@ export async function POST(req: NextRequest) {
         const admin = await prisma.admin.findUnique({ 
             where: {
                 email,
-                password
             }
         });
         if (!admin) {
@@ -30,11 +29,11 @@ export async function POST(req: NextRequest) {
             );
         }
 
-        // const isMatch = await bcrypt.compare(password, admin.password);
-        // if (!isMatch) return NextResponse.json(
-        //     { error: "Invalid Credentials", isLoggedIn: false },
-        //     { status: 400 }
-        // );
+        const isMatch = await bcrypt.compare(password, admin.password);
+        if (!isMatch) return NextResponse.json(
+            { error: "Invalid Credentials", isLoggedIn: false },
+            { status: 400 }
+        );
 
         await prisma.admin.update({
             where: { id: admin.id },
@@ -42,7 +41,7 @@ export async function POST(req: NextRequest) {
         });
 
         const token = jwt.sign(
-            { adminId: admin.id, email: admin.email },
+            { adminId: admin.id, email: admin.email, isAdmin: true },
             process.env.NEXTAUTH_SECRET!,
             { expiresIn: "7d" }
         );

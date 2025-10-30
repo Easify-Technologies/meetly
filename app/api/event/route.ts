@@ -1,140 +1,78 @@
-<<<<<<< HEAD
 import { NextRequest, NextResponse } from "next/server";
-import jwt from "jsonwebtoken";
 import { prisma } from "@/lib/prisma";
+import { verifyAuthToken } from "@/lib/auth";
+
+function getNextSundays(count: number): Date[] {
+  const sundays: Date[] = [];
+  const now = new Date();
+  let nextSunday = new Date(now);
+  nextSunday.setDate(now.getDate() + ((7 - now.getDay()) % 7 || 7));
+  nextSunday.setHours(10, 0, 0, 0);
+  for (let i = 0; i < count; i++) {
+    const newDate = new Date(nextSunday);
+    newDate.setDate(nextSunday.getDate() + i * 7);
+    sundays.push(newDate);
+  }
+  return sundays;
+}
 
 export async function POST(request: NextRequest) {
   try {
-    // --- JWT VALIDATION ---
-    const authHeader = request.headers.get("Authorization");
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      return NextResponse.json({ message: "No token provided" }, { status: 401 });
-    }
+    const auth = verifyAuthToken(request);
 
-    const token = authHeader.split(" ")[1];
-    let payload: any;
-
-    try {
-      payload = jwt.verify(token, process.env.JWT_SECRET!);
-    } catch (error) {
-      return NextResponse.json({ message: "Invalid or expired token" }, { status: 401 });
-    }
-
-    // --- ADMIN VALIDATION ---
-    const admin = await prisma.admin.findUnique({
-      where: { id: payload.adminId },
-    });
-    if (!admin) {
-      return NextResponse.json({ message: "Only admins can create events" }, { status: 403 });
-    }
-
-    // --- BODY VALIDATION ---
-    const body = await request.json();
-    const { date, city, country, cafeId } = body;
-
-    if (!date || !city || !country) {
+    // ✅ detect if the token is from an admin
+    if (!auth?.adminId) {
       return NextResponse.json(
-        { message: "Date, city, and country are required" },
-        { status: 400 }
+        { message: "Only admins can create events" },
+        { status: 403 }
       );
     }
 
-    // --- CREATE EVENT ---
-    const event = await prisma.event.create({
-      data: {
-        date: new Date(date),
-        city,
-        country,
-        cafeId: cafeId || null,
-        createdBy: admin.id,
-      },
-      include: {
-        cafe: true,
-      },
-    });
+    const adminId = auth.adminId; // ✅ now defined
+    const locations = await prisma.location.findMany();
+    if (locations.length === 0) {
+      return NextResponse.json({ message: "No locations found" }, { status: 400 });
+    }
 
+    const sundays = getNextSundays(4);
+    const createdEvents = [];
+
+    for (const location of locations) {
+      for (const sunday of sundays) {
+        const existing = await prisma.event.findFirst({
+          where: {
+            date: sunday,
+            city: location.city,
+            country: location.country,
+          },
+        });
+
+        if (existing) continue;
+
+        const event = await prisma.event.create({
+          data: {
+            date: sunday,
+            city: location.city,
+            country: location.country,
+            createdBy: adminId,
+          },
+        });
+
+        createdEvents.push(event);
+      }
+    }
+
+    return NextResponse.json({
+      success: true,
+      message: "Events created for all locations for next 4 Sundays",
+      createdCount: createdEvents.length,
+      events: createdEvents,
+    });
+  } catch (err: any) {
+    console.error("Error creating events:", err);
     return NextResponse.json(
-      { success: true, message: "Event created successfully", event },
-      { status: 201 }
-    );
-  } catch (error: any) {
-    console.error("Error creating event:", error);
-    return NextResponse.json(
-      { message: "Error creating event", error: error.message },
+      { message: "Failed to create events", error: err.message },
       { status: 500 }
     );
   }
 }
-=======
-import { NextRequest, NextResponse } from "next/server";
-import jwt from "jsonwebtoken";
-import { prisma } from "@/lib/prisma";
-
-export async function POST(request: NextRequest) {
-  try {
-    // --- JWT VALIDATION ---
-    // const authHeader = request.headers.get("Authorization");
-    // if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    //   return NextResponse.json({ message: "No token provided" }, { status: 401 });
-    // }
-
-    // const token = authHeader.split(" ")[1];
-    // let payload: any;
-
-    // try {
-    //   payload = jwt.verify(token, process.env.NEXTAUTH_SECRET!);
-    // } catch (error) {
-    //   return NextResponse.json({ message: "Invalid or expired token" }, { status: 401 });
-    // }
-
-    // // --- ADMIN VALIDATION ---
-    // const admin = await prisma.admin.findUnique({
-    //   where: { id: payload.adminId },
-    // });
-    // if (!admin) {
-    //   return NextResponse.json({ message: "Only admins can create events" }, { status: 403 });
-    // }
-
-    // --- BODY VALIDATION ---
-    const body = await request.json();
-    const { date, city, country, cafeId } = body;
-
-    if (!date || !city || !country) {
-      return NextResponse.json(
-        { error: "Date, city, and country are required" },
-        { status: 400 }
-      );
-    }
-
-    const selectedDate = new Date(date);
-    const now = new Date();
-
-    selectedDate.setHours(now.getHours(), now.getMinutes(), now.getSeconds(), now.getMilliseconds());
-
-    // --- CREATE EVENT ---
-    const event = await prisma.event.create({
-      data: {
-        date: selectedDate,
-        city,
-        country,
-        cafeId: cafeId || null,
-        createdBy: "68fe04fc214c35383d3a8ebd",
-      },
-      include: {
-        cafe: true,
-      },
-    });
-
-    return NextResponse.json(
-      { success: true, message: "Event created successfully", event },
-      { status: 201 }
-    );
-  } catch (error: any) {
-    console.error("Error creating event:", error);
-    return NextResponse.json(
-      { message: "Error creating event", error: error.message },
-      { status: 500 }
-    );
-  }
-}
-
