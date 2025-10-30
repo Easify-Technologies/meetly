@@ -144,7 +144,7 @@ const Page = () => {
                   </div>
                   <div className="p-4 bg-background">
                     <Link
-                      href={`/get-started/questions?city_id=${cityId}&cafe_id=${selectedCafe}`}
+                      href={`/get-started/user-details?city_id=${cityId}&cafe_id=${selectedCafe}`}
                       data-slot="button"
                       className="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm md:text-base font-medium transition-all select-none bg-[#FFD100] text-[#2F1107] hover:bg-[#2F1107] hover:text-[#ffd100] h-12 px-4 py-2 rounded-full w-full duration-500"
                       role="link"

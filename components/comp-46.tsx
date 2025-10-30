@@ -4,6 +4,7 @@ import React from "react";
 import { ChevronDownIcon, PhoneIcon } from "lucide-react";
 import * as RPNInput from "react-phone-number-input";
 import flags from "react-phone-number-input/flags";
+import { usePathname } from "next/navigation";
 
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
@@ -15,13 +16,18 @@ interface PhoneNumberInputProps {
 }
 
 const PhoneNumberInput = ({ phone, onChange }: PhoneNumberInputProps) => {
+  const path = usePathname();
   return (
     <div className="mt-6" dir="ltr">
       <Label
         htmlFor="phone_number"
         className="text-[#2f1107] text-base font-semibold mb-2"
       >
-        Phone number
+        {path === "/get-started/user-details" ? (
+          <h1 className="text-2xl md:text-3xl lg:text-4xl text-[#2F1107] font-semibold mb-6">What is your Phone number?</h1>
+        ) : (
+          "Phone number"
+        )}
       </Label>
       <RPNInput.default
         className="flex shadow-xs mt-2"
@@ -38,11 +44,12 @@ const PhoneNumberInput = ({ phone, onChange }: PhoneNumberInputProps) => {
 };
 
 const PhoneInput = ({ className, ...props }: React.ComponentProps<"input">) => {
+  const path = usePathname();
   return (
     <Input
       data-slot="phone-input"
       className={cn(
-        "w-full border border-[#2f1107] text-[#2f1107] bg-transparent outline-none text-sm font-semibold p-2",
+        `${path == "/get-started/user-details" ? "w-full border border-[#2f1107] text-[#2f1107] bg-transparent outline-none text-base font-semibold px-5 py-2" : "w-full border border-[#2f1107] text-[#2f1107] bg-transparent outline-none text-sm font-semibold p-2"}`,
         className
       )}
       {...props}

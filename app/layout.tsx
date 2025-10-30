@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
-import { Orbit } from "next/font/google";
+import { DM_Sans } from "next/font/google";
 import Providers from "./providers";
 import "./globals.css";
 
-const orbit = Orbit({
-  variable: "--font-orbit",
+const dmSans = DM_Sans({
+  variable: "--font-sans",
   subsets: ["latin"],
-  weight: ["400"]
+  weight: ["400", "500", "600", "700"],
 });
 
 export const metadata: Metadata = {
@@ -25,7 +25,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${orbit.variable} antialiased`}
+        className={`${dmSans.variable} antialiased`}
       >
         <Providers>
           {children}

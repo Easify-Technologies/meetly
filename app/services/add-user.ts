@@ -29,9 +29,10 @@ export async function addUser(data: {
 
     if (response.status === 201) {
       await signIn("credentials", {
-        redirect: false,
+        redirect: true,
         email: data.email,
         password: data.password,
+        callbackUrl: "/bookings"
       });
     }
 
