@@ -58,25 +58,9 @@ const Page = () => {
 
     return (
         <>
-            <div className="h-full flex flex-col p-4">
-                <div className="">
-                    <div className="grid grid-cols-2 lg:grid-cols-[1fr_auto_1fr] items-center min-h-0 lg:min-h-20 p-4 w-full">
-                        <Link href="#" className="flex items-center gap-2 w-20">
-                            <Image
-                                src="/Mocha-e1760632297719.webp"
-                                alt="Meetly"
-                                width={200}
-                                height={200}
-                                quality={100}
-                                priority
-                            />
-                        </Link>
-                        <div className="hidden lg:flex items-center gap-6"></div>
-                        <div className="flex items-center justify-end"></div>
-                    </div>
-                </div>
-                <div className="flex-1 min-h-0 overflow-y-auto flex flex-col justify-center items-center">
-                    <form encType='multipart/form-data' className="flex flex-col  w-full gap-4 max-w-sm">
+           <section className="w-screen min-h-screen bg-[#FFFFF5] relative">
+                <div className="w-full mx-auto py-8 px-4 md:px-8 flex flex-col justify-center md:items-start items-center">
+                    <form encType='multipart/form-data' className="flex flex-col w-full gap-4 max-w-sm">
                         <h1 className="text-4xl text-[#2f1107] font-semibold md:text-5xl lg:text-6xl text-center mb-4">Add Events</h1>
                         <div className="grid w-full items-center gap-3">
                             <div className="relative">
@@ -144,7 +128,7 @@ const Page = () => {
                         </div>
                     </form>
                 </div>
-            </div>
+           </section>
         </>
     )
 }

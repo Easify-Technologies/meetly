@@ -16,7 +16,7 @@ export function useFetchCafes(locationId: string) {
 
 export function useFetchAllCafes() {
     return useQuery({
-        queryKey: ['all-locations'],
+        queryKey: ['all-cafes'],
         queryFn: () => allCafes(),
         refetchOnWindowFocus: false,
         refetchOnReconnect: false,
