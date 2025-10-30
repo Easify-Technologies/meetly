@@ -17,7 +17,7 @@ export function useGetAllEvents() {
 
 export function useFetchEvents() {
     return useQuery({
-        queryKey: ['fetch_events'],
+        queryKey: ['all-events'],
         queryFn: () => fetchEvents(),
         refetchOnWindowFocus: false,
         refetchOnReconnect: false,
