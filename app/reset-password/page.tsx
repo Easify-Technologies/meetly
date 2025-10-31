@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { Eye, EyeOff } from "lucide-react";
 
 import { useResetPassword } from '../queries/reset-password';
 
@@ -12,6 +13,8 @@ interface PasswordProps {
 }
 
 const Page = () => {
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [formData, setFormData] = useState<PasswordProps>({
     password: "",
     confirm_password: ""
@@ -23,7 +26,7 @@ const Page = () => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   }
-  
+
   const { mutate, isPending, isSuccess, isError, data, error } = useResetPassword();
 
   return (
@@ -50,8 +53,18 @@ const Page = () => {
             <h1 className="text-4xl text-[#2f1107] font-semibold md:text-5xl lg:text-6xl text-center mb-4">Create Password</h1>
             <div className="grid w-full items-center gap-3">
               <div className="relative">
-                <input onChange={handleInputChange} className="file:text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground border-input flex h-16 w-full min-w-0 rounded-full border bg-muted px-5 py-2 text-base transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium md:text-sm" aria-placeholder="Password" placeholder="Password" id="password" type="password" value={password} name="password" />
-                <input onChange={handleInputChange} className="file:text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground border-input flex h-16 w-full min-w-0 rounded-full border bg-muted px-5 py-2 mt-4 text-base transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium md:text-sm" aria-placeholder="Confirm Password" placeholder="Confirm Password" id="confirm_password" type="password" value={confirm_password} name="confirm_password" />
+                <div className='flex relative items-center justify-between bg-muted rounded-full px-5 py-2 h-16 mt-4 border border-input'>
+                  <input type={showPassword ? "text" : "password"} onChange={handleInputChange} className='w-full outline-0' placeholder='Password' value={password} id='password' name='password' />
+                  <button onClick={() => setShowPassword((prev) => !prev)} type="button" className='cursor-pointer text-muted-foreground'>
+                    {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                  </button>
+                </div>
+                <div className='flex relative items-center justify-between bg-muted rounded-full px-5 py-2 h-16 mt-4 border border-input'>
+                  <input type={showConfirmPassword ? "text" : "password"} onChange={handleInputChange} className='w-full outline-0' placeholder='Confirm Password' value={confirm_password} id='confirm_password' name='confirm_password' />
+                  <button onClick={() => setShowConfirmPassword((prev) => !prev)} type="button" className='cursor-pointer text-muted-foreground'>
+                    {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                  </button>
+                </div>
               </div>
               {isError && (
                 <p data-slot="form-message" className="text-destructive text-sm">{(error as Error).message}</p>
