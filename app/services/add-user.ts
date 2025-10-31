@@ -32,7 +32,7 @@ export async function addUser(data: {
         redirect: true,
         email: data.email,
         password: data.password,
-        callbackUrl: "/bookings"
+        callbackUrl: "/face-verification"
       });
     }
 
