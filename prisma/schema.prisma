@@ -1,3 +1,113 @@
+// generator client {
+//   provider = "prisma-client-js"
+// }
+
+// datasource db {
+//   provider = "mongodb"
+//   url      = env("DATABASE_URI")
+// }
+
+// model User {
+//   id                  String   @id @default(auto()) @map("_id") @db.ObjectId
+//   name                String
+//   email               String   @unique
+//   phoneNumber         String
+//   gender              String
+//   dateOfBirth         String
+//   country             String
+//   city                String
+//   connectionStyles    String
+//   communicationStyles String
+//   socialStyles        String
+//   healthAndFitness    String
+//   family              String
+//   spirituality        String
+//   politicalNews       String
+//   incorrectHumor      String
+//   kindOfPeople        String[]
+//   password            String
+//   isLoggedIn          Boolean  @default(false)
+//   isVerified          Boolean  @default(false)
+//   createdAt           DateTime @default(now())
+//   cafeId              String?  @db.ObjectId
+
+//   cafe Cafe? @relation(fields: [cafeId], references: [id])
+
+//   // Explicit relation to events via participants
+//   eventParticipants EventParticipant[]
+// }
+
+// model Location {
+//   id        String   @id @default(auto()) @map("_id") @db.ObjectId
+//   city      String
+//   country   String
+//   imageUrl  String
+//   cafes     Cafe[]
+//   createdAt DateTime @default(now())
+// }
+
+// model Cafe {
+//   id         String   @id @default(auto()) @map("_id") @db.ObjectId
+//   name       String
+//   locationId String   @db.ObjectId
+//   address    String
+//   createdAt  DateTime @default(now())
+//   imageUrl   String
+
+//   location Location @relation(fields: [locationId], references: [id])
+//   users    User[]
+//   events   Event[]
+// }
+
+// model Event {
+//   id         String   @id @default(auto()) @map("_id") @db.ObjectId
+//   date       DateTime
+//   city       String
+//   country    String
+//   cafeId     String?  @db.ObjectId
+//   cafe       Cafe?    @relation(fields: [cafeId], references: [id])
+//   createdAt  DateTime @default(now())
+//   isClosed   Boolean  @default(false)
+
+//   // The admin who created the event
+//   createdBy  String   @db.ObjectId
+//   admin      Admin    @relation(fields: [createdBy], references: [id])
+
+//   // Users who joined this event
+//   participants EventParticipant[]
+
+//   matchGroups MatchGroup[]
+// }
+
+// model EventParticipant {
+//   id        String   @id @default(auto()) @map("_id") @db.ObjectId
+//   userId    String   @db.ObjectId
+//   eventId   String   @db.ObjectId
+//   joinedAt  DateTime @default(now())
+
+//   user  User  @relation(fields: [userId], references: [id])
+//   event Event @relation(fields: [eventId], references: [id])
+// }
+
+// model MatchGroup {
+//   id        String   @id @default(auto()) @map("_id") @db.ObjectId
+//   eventId   String   @db.ObjectId
+//   members   String[]
+//   createdAt DateTime @default(now())
+
+//   event Event @relation(fields: [eventId], references: [id])
+// }
+
+// model Admin {
+//   id         String  @id @default(auto()) @map("_id") @db.ObjectId
+//   email      String  @unique
+//   password   String
+//   isLoggedIn Boolean @default(false)
+
+//   // List of events created by this admin
+//   events Event[]
+// }
+
 generator client {
   provider = "prisma-client-js"
 }
@@ -31,10 +141,16 @@ model User {
   createdAt           DateTime @default(now())
   cafeId              String?  @db.ObjectId
 
-  cafe Cafe? @relation(fields: [cafeId], references: [id])
+  cafe                Cafe? @relation(fields: [cafeId], references: [id])
 
-  // Explicit relation to events via participants
-  eventParticipants EventParticipant[]
+  eventParticipants   EventParticipant[]
+
+  age                 Int?
+  interests           String?
+  payment             Payment[]
+  
+  subscriptionActive  Boolean @default(false)
+  subscriptionEndsAt  DateTime?
 }
 
 model Location {
@@ -44,6 +160,10 @@ model Location {
   imageUrl  String
   cafes     Cafe[]
   createdAt DateTime @default(now())
+
+  // New field from spec
+  timezone String?
+  events   Event[]
 }
 
 model Cafe {
@@ -57,33 +177,47 @@ model Cafe {
   location Location @relation(fields: [locationId], references: [id])
   users    User[]
   events   Event[]
-}
 
-model Event {
-  id         String   @id @default(auto()) @map("_id") @db.ObjectId
-  date       DateTime
-  city       String
-  country    String
-  cafeId     String?  @db.ObjectId
-  cafe       Cafe?    @relation(fields: [cafeId], references: [id])
-  createdAt  DateTime @default(now())
-  isClosed   Boolean  @default(false)
-
-  // The admin who created the event
-  createdBy  String   @db.ObjectId
-  admin      Admin    @relation(fields: [createdBy], references: [id])
-
-  // Users who joined this event
-  participants EventParticipant[]
+  // From spec
+  capacity Int?
+  contact  String?
 
   matchGroups MatchGroup[]
 }
 
-model EventParticipant {
+model Event {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  userId    String   @db.ObjectId
-  eventId   String   @db.ObjectId
-  joinedAt  DateTime @default(now())
+  date      DateTime
+  city      String
+  country   String
+  cafeId    String?  @db.ObjectId
+  cafe      Cafe?    @relation(fields: [cafeId], references: [id])
+  createdAt DateTime @default(now())
+  isClosed  Boolean  @default(false)
+
+  createdBy String @db.ObjectId
+  admin     Admin  @relation(fields: [createdBy], references: [id])
+
+  participants EventParticipant[]
+
+  matchGroups MatchGroup[]
+  payment     Payment[]
+
+  // Additional event properties from spec
+  locationId   String?   @db.ObjectId
+  location     Location? @relation(fields: [locationId], references: [id])
+  bookingOpen  DateTime? // opens before event
+  bookingClose DateTime? // closes before event
+  status       String? // 'Open', 'Closed', 'Completed'
+}
+
+model EventParticipant {
+  id       String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId   String   @db.ObjectId
+  eventId  String   @db.ObjectId
+  joinedAt DateTime @default(now())
+
+  status String? 
 
   user  User  @relation(fields: [userId], references: [id])
   event Event @relation(fields: [eventId], references: [id])
@@ -92,12 +226,16 @@ model EventParticipant {
 model MatchGroup {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
   eventId   String   @db.ObjectId
-  members   String[]
+  members   String[] // user IDs array
   createdAt DateTime @default(now())
 
   event Event @relation(fields: [eventId], references: [id])
-}
 
+  // Added from Groups spec
+  cafeId      String? @db.ObjectId
+  groupNumber Int?
+  cafe        Cafe?   @relation(fields: [cafeId], references: [id])
+}
 
 model Admin {
   id         String  @id @default(auto()) @map("_id") @db.ObjectId
@@ -105,6 +243,19 @@ model Admin {
   password   String
   isLoggedIn Boolean @default(false)
 
-  // List of events created by this admin
   events Event[]
+}
+
+
+model Payment {
+  id              String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId          String   @db.ObjectId
+  eventId         String   @db.ObjectId
+  stripeSessionId String
+  mode            String   
+  status          String   
+  createdAt       DateTime @default(now())
+
+  user  User  @relation(fields: [userId], references: [id])
+  event Event @relation(fields: [eventId], references: [id])
 }

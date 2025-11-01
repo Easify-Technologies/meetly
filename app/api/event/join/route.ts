@@ -44,16 +44,23 @@ export async function POST(request: NextRequest) {
                 { status: 400 }
             );
 
+        if (event.bookingClose && now > event.bookingClose) {
+            return NextResponse.json(
+                { message: "Booking closed for this event" },
+                { status: 400 }
+            );
+        }
+
         // Add participant
         const participant = await prisma.eventParticipant.create({
-            data: { userId, eventId },
+            data: { userId, eventId, status: "Active" },
             include: { user: true },
         });
 
         await sendMeetupEmail({
             to: participant.user.email,
             groupNames: participant.user.name,
-            date: event.date.toISOString(), // ✅ string
+            date: event.date.toISOString(),
             cafe: {
                 name: event.cafe?.name || "Cafe",
                 address: event.cafe?.address || "Address not available",

@@ -45,7 +45,7 @@ function computeScore(u: MatchUser, c: MatchUser): number {
 /**
  * Forms groups for an event and saves them in the MatchGroup table.
  */
-export async function formEventGroups(eventId: string) {
+export async function formEventGroups(eventId: string, cafeId?: string) {
   const participants = await prisma.eventParticipant.findMany({
     where: { eventId },
     include: { user: true },
@@ -89,15 +89,17 @@ export async function formEventGroups(eventId: string) {
     groups.push(group);
   }
 
-  // 💾 Save groups in the DB
+  // 💾 Save groups in DB
   for (const group of groups) {
     await prisma.matchGroup.create({
       data: {
         eventId,
         members: group.map((u) => u.id),
+        cafeId, // ✅ safely passed from outside
       },
     });
   }
 
   return groups;
 }
+

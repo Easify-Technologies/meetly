@@ -20,7 +20,6 @@ export async function GET() {
     });
 
     for (const event of events) {
-      // 🔹 If no cafe is assigned yet, assign one automatically
       let cafe = event.cafe;
       if (!cafe) {
         const availableCafes = await prisma.cafe.findMany({
@@ -40,8 +39,15 @@ export async function GET() {
         }
       }
 
-      // 🔹 Form groups and send emails
-      const groups = await formEventGroups(event.id);
+      const existingGroups = await prisma.matchGroup.findMany({
+        where: { eventId: event.id },
+      });
+      if (existingGroups.length > 0) {
+        console.log(`Skipping event ${event.id}, groups already formed.`);
+        continue; // skip already grouped events
+      }
+
+      const groups = await formEventGroups(event.id, cafe?.id);
 
       for (const group of groups) {
         const to = group.map((u) => u.email);
@@ -58,7 +64,6 @@ export async function GET() {
         });
       }
 
-      // 🔹 Close the event
       await prisma.event.update({
         where: { id: event.id },
         data: { isClosed: true },
