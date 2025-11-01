@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import PhoneNumberInput from "@/components/comp-46";
+import { Eye, EyeOff } from "lucide-react";
 
 interface UserDetailsProps {
   name: string;
@@ -18,6 +19,7 @@ const Page = () => {
   const city_id = searchParams.get("city_id") ?? "";
   const cafe_id = searchParams.get("cafe_id") ?? "";
 
+  const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState<UserDetailsProps>({
     name: "",
     email: "",
@@ -71,7 +73,12 @@ const Page = () => {
                     />
                     <div className='py-6 border-t border-[#f7f0f2]'>
                       <h1 className="text-2xl md:text-3xl lg:text-4xl text-[#2F1107] font-semibold">What is your password?</h1>
-                      <input type="password" value={password} id="password" name="password" onChange={handleChange} className="bg-muted px-5 py-2 outline border-0 rounded-full w-full h-12 text-[#2F1107] font-medium text-base mt-6" />
+                      <div className='flex relative items-center justify-between bg-muted rounded-full px-5 py-2 h-16 mt-4 border border-input'>
+                        <input type={showPassword ? "text" : "password"} onChange={handleChange} className='w-full outline-0' placeholder='Password' value={password} id='password' name='password' />
+                        <button onClick={() => setShowPassword((prev) => !prev)} type="button" className='cursor-pointer text-muted-foreground'>
+                          {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                        </button>
+                      </div>
                     </div>
                   </div>
                   <div className="p-4 bg-background">

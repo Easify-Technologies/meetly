@@ -11,6 +11,7 @@ export async function POST(request: Request) {
       name,
       email,
       phoneNumber,
+      age,
       gender,
       dateOfBirth,
       cafe_id,
@@ -33,6 +34,7 @@ export async function POST(request: Request) {
       !email ||
       !phoneNumber ||
       !gender ||
+      !age ||
       !dateOfBirth ||
       !cafe_id ||
       !city_id ||
@@ -62,6 +64,13 @@ export async function POST(request: Request) {
       );
     }
 
+    if (age && Number(age) <= 18) {
+      return NextResponse.json(
+        { error: "Age should be greater than 18" },
+        { status: 400 }
+      );
+    }
+
     const getCity = await prisma.location.findUnique({
       where: {
         id: city_id,
@@ -83,6 +92,7 @@ export async function POST(request: Request) {
         phoneNumber,
         gender,
         dateOfBirth,
+        age: Number(age),
         country: getCity?.country || "",
         city: getCity?.city || "",
         connectionStyles: connectionStyle,

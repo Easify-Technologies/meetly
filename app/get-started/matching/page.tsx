@@ -31,6 +31,7 @@ const Page = () => {
         email: params.email || "",
         phoneNumber: params.phoneNumber || "",
         gender: params.gender || "",
+        age: params.age || "",
         dateOfBirth: params.dateOfBirth || "",
         cafe_id: params.cafe_id || "",
         city_id: params.city_id || "",

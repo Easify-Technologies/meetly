@@ -22,14 +22,16 @@ const Page = () => {
     const [formData, setFormData] = useState({
         gender: "",
         dateOfBirth: "",
+        age: ""
     });
 
     const handleNext = () => {
-        if (!formData.gender || !date) return;
+        if (!formData.gender || !date || !formData.age) return;
 
         const params = new URLSearchParams(window.location.search);
 
         params.set("gender", formData.gender);
+        params.set("age", formData.age);
         params.set("dateOfBirth", date.toISOString().split("T")[0]);
 
         router.replace(`?${params.toString()}`, { scroll: false });
@@ -103,7 +105,35 @@ const Page = () => {
                                                     Female
                                                 </span>
                                             </Label>
+
+                                            <Label
+                                                htmlFor="other"
+                                                className="relative w-1/2 flex cursor-pointer flex-col items-center gap-3 rounded-full border border-input px-2 py-5 text-center shadow-xs transition-all
+                                                data-[state=checked]:bg-yellow-100
+                                                data-[state=checked]:border-yellow-500
+                                                focus-within:ring-2
+                                                focus-within:ring-yellow-300"
+                                            >
+                                                <RadioGroupItem
+                                                    value="other"
+                                                    id="other"
+                                                    className="sr-only peer"
+                                                />
+                                                <span className="text-sm leading-none font-bold text-foreground peer-data-[state=checked]:text-yellow-700">
+                                                    Other
+                                                </span>
+                                            </Label>
                                         </RadioGroup>
+
+                                        <div className='pt-6 border-t border-[#f7f0f2]'>
+                                            <h1 className="text-2xl md:text-3xl lg:text-4xl text-[#2F1107] font-semibold">What is your age?</h1>
+                                            <input className="w-full rounded-full border border-input outline-none px-2 py-4 text-sm text-[#2f1107] font-semibold mt-6" type="number" id="age" name="age" value={formData.age} onChange={(e) =>
+                                                setFormData((prev) => ({
+                                                    ...prev,
+                                                    age: e.target.value
+                                                }))
+                                            }/>
+                                        </div>
 
                                         <div className='py-6 border-t border-[#f7f0f2]'>
                                             <h1 className="text-2xl md:text-3xl lg:text-4xl text-[#2F1107] font-semibold">What is your date of birth?</h1>

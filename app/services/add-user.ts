@@ -8,6 +8,7 @@ interface ApiError {
 export async function addUser(data: {
   name: string;
   email: string;
+  age: number;
   phoneNumber: string;
   gender: string;
   dateOfBirth: string;
